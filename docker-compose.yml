@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: manage-money-api
+    restart: unless-stopped
+    ports:
+      - "3334:3334"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+      PORT: 3334
+      DB_HOST: host.docker.internal
+      DB_PORT: 3308
+    networks:
+      - noithatmylannew_app_network
+
+networks:
+  noithatmylannew_app_network:
+    external: true

@@ -1,0 +1,26 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: manage-money-api-dev
+    restart: unless-stopped
+    ports:
+      - "3334:3334"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      PORT: 3334
+      DB_HOST: host.docker.internal
+      DB_PORT: 3308
+    volumes:
+      - ./src:/app/src
+    networks:
+      - noithatmylannew_app_network
+
+networks:
+  noithatmylannew_app_network:
+    external: true
