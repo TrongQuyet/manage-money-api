@@ -1,0 +1,613 @@
+{
+  "organization": {
+    "name": "trum a9",
+    "slug": "trum-a9",
+    "description": ""
+  },
+  "admin": {
+    "user_name": "admin-a9",
+    "password": "a9provip"
+  },
+  "members": [
+    {
+      "id": "m1",
+      "name": "Linh",
+      "email": "linh@example.com",
+      "role": "Admin",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m22",
+      "name": "Thảo",
+      "email": "thao@example.com",
+      "role": "Thủ quỹ",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m2",
+      "name": "Chi",
+      "email": "chi@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m3",
+      "name": "Duy Thắng",
+      "email": "duythang@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m4",
+      "name": "Đạt",
+      "email": "dat@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m5",
+      "name": "Đình Hiếu",
+      "email": "dinhhieu@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m6",
+      "name": "Đoàn",
+      "email": "doan@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m7",
+      "name": "Hải",
+      "email": "hai@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m8",
+      "name": "Khang",
+      "email": "khang@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m9",
+      "name": "Khánh",
+      "email": "khanh@example.com",
+      "role": "Thành viên",
+      "note": "Nợ quỹ",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m11",
+      "name": "Mai Anh",
+      "email": "maianh@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m12",
+      "name": "Mạnh Tùng",
+      "email": "manhtung@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m13",
+      "name": "Minh",
+      "email": "minh@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m14",
+      "name": "Minh Hiếu",
+      "email": "minhhieu@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m15",
+      "name": "Nam",
+      "email": "nam@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m16",
+      "name": "Nghĩa",
+      "email": "nghia@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m17",
+      "name": "Ngọc",
+      "email": "ngoc@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m18",
+      "name": "Ngọc Thắng",
+      "email": "ngocthang@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m19",
+      "name": "Nguyệt",
+      "email": "nguyet@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m20",
+      "name": "Quyết",
+      "email": "quyet@example.com",
+      "role": "Admin",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z",
+      "phone": "0355263005",
+      "address": "Liên Trung"
+    },
+    {
+      "id": "m21",
+      "name": "Tài",
+      "email": "tai@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m23",
+      "name": "Văn Tùng",
+      "email": "vantung@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m24",
+      "name": "Vân Anh",
+      "email": "vananh@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m25",
+      "name": "Trần Mạnh",
+      "email": "tranmanh@example.com",
+      "role": "Thành viên",
+      "note": "Nợ quỹ",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m26",
+      "name": "Văn Đức",
+      "email": "vanduc@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m27",
+      "name": "Thái Trang",
+      "email": "thaitrang@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m28",
+      "name": "Ngọc Tấn",
+      "email": "ngoctan@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m29",
+      "name": "Trung Nguyễn",
+      "email": "trungnguyen@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m30",
+      "name": "Thanh Thuý",
+      "email": "thanhthuy@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m32",
+      "name": "Bình Văn",
+      "email": "binhvan@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m33",
+      "name": "Minh Hạnh",
+      "email": "minhhanh@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m34",
+      "name": "Văn Trường",
+      "email": "vantruong@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "969e76tnd",
+      "name": "Duy Khánh",
+      "email": "duykhanh@example.com",
+      "phone": "",
+      "address": "",
+      "role": "Thành viên",
+      "note": "30/1/2026",
+      "joinedAt": "2026-03-16T04:07:20.034Z"
+    },
+    {
+      "id": "ff29p87lp",
+      "name": "Mạnh",
+      "email": "manh@example.com",
+      "phone": "",
+      "address": "",
+      "role": "Thành viên",
+      "note": "5/2/2026",
+      "joinedAt": "2026-03-16T04:08:29.595Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-m1",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m1"
+    },
+    {
+      "id": "tx-m22",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m22"
+    },
+    {
+      "id": "tx-m2",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m2"
+    },
+    {
+      "id": "tx-m3",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m3"
+    },
+    {
+      "id": "tx-m4",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m4"
+    },
+    {
+      "id": "tx-m5",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m5"
+    },
+    {
+      "id": "tx-m6",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m6"
+    },
+    {
+      "id": "tx-m7",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m7"
+    },
+    {
+      "id": "tx-m8",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m8"
+    },
+    {
+      "id": "tx-m11",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m11"
+    },
+    {
+      "id": "tx-m12",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m12"
+    },
+    {
+      "id": "tx-m13",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m13"
+    },
+    {
+      "id": "tx-m14",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m14"
+    },
+    {
+      "id": "tx-m15",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m15"
+    },
+    {
+      "id": "tx-m16",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m16"
+    },
+    {
+      "id": "tx-m17",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m17"
+    },
+    {
+      "id": "tx-m18",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m18"
+    },
+    {
+      "id": "tx-m19",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m19"
+    },
+    {
+      "id": "tx-m20",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m20"
+    },
+    {
+      "id": "tx-m21",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m21"
+    },
+    {
+      "id": "tx-m23",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m23"
+    },
+    {
+      "id": "tx-m24",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m24"
+    },
+    {
+      "id": "tx-m26",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m26"
+    },
+    {
+      "id": "tx-m27",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m27"
+    },
+    {
+      "id": "tx-m28",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m28"
+    },
+    {
+      "id": "tx-m29",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m29"
+    },
+    {
+      "id": "tx-m30",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m30"
+    },
+    {
+      "id": "tx-m32",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m32"
+    },
+    {
+      "id": "tx-m33",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m33"
+    },
+    {
+      "id": "tx-m34",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-20",
+      "memberId": "m34"
+    },
+    {
+      "id": "6cryoo00y",
+      "type": "EXPENSE",
+      "amount": 1000000,
+      "description": "Mừng cưới",
+      "category": "Khác",
+      "recipient": "Hải",
+      "date": "2025-12-24",
+      "memberId": "m1"
+    },
+    {
+      "id": "yw5x8g4r4",
+      "type": "EXPENSE",
+      "amount": 1000000,
+      "description": "Mừng cưới",
+      "category": "Khác",
+      "recipient": "Chi",
+      "date": "2025-12-24",
+      "memberId": "m1"
+    },
+    {
+      "id": "uyrbeva4j",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "recipient": "",
+      "date": "2026-01-30",
+      "memberId": "m9"
+    },
+    {
+      "id": "cqpo4uhpk",
+      "type": "INCOME",
+      "amount": 500000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "recipient": "",
+      "date": "2026-02-05",
+      "memberId": "m25"
+    },
+    {
+      "id": "kukbr7r4s",
+      "type": "EXPENSE",
+      "amount": 1000000,
+      "description": "Mừng cưới",
+      "category": "Khác",
+      "recipient": "Duy Khánh",
+      "date": "2026-03-03",
+      "memberId": "m1"
+    }
+  ]
+}

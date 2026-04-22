@@ -1,0 +1,260 @@
+{
+  "organization": {
+    "name": "Liên Trung",
+    "slug": "lien-trung",
+    "description": ""
+  },
+  "admin": {
+    "user_name": "admin-lien-trung",
+    "password": "lientrungprovip"
+  },
+  "members": [
+    {
+      "id": "m22",
+      "name": "Lê Minh Hiếu",
+      "email": "Hieu@example.com",
+      "role": "Admin",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m4",
+      "name": "Nguyễn Trọng Bách",
+      "email": "bach@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m5",
+      "name": "Nguyễn Như Thắng",
+      "email": "nhuthang@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m6",
+      "name": "Vũ Đình Thái",
+      "email": "thai@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m7",
+      "name": "Vũ Đình Xuân",
+      "email": "xuan@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m8",
+      "name": "Nguyễn Hợp Việt Thắng",
+      "email": "viethang@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m14",
+      "name": "Nguyễn Xuân Khải",
+      "email": "khai@example.com",
+      "role": "Thành viên",
+      "note": "",
+      "address": "Liên trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "m20",
+      "name": "Nguyễn Trọng Quyết",
+      "email": "quyet@example.com",
+      "role": "Quan sát viên",
+      "note": "",
+      "phone": "0355263005",
+      "address": "Liên Trung",
+      "joinedAt": "2026-01-22T10:21:18.098Z"
+    },
+    {
+      "id": "wpfc3zssk",
+      "name": "Nguyễn Duy Thắng",
+      "email": "thang@example.com",
+      "phone": "",
+      "address": "Liên trung",
+      "role": "Thành viên",
+      "note": "2",
+      "joinedAt": "2026-01-25T16:55:25.855Z"
+    }
+  ],
+  "transactions": [
+    {
+      "id": "tx-m22",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m22"
+    },
+    {
+      "id": "tx-m4",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m4"
+    },
+    {
+      "id": "tx-m5",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m5"
+    },
+    {
+      "id": "tx-m6",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m6"
+    },
+    {
+      "id": "tx-m7",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m7"
+    },
+    {
+      "id": "tx-m8",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m8"
+    },
+    {
+      "id": "tx-m14",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m14"
+    },
+    {
+      "id": "tx-m20",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Khác",
+      "date": "2025-12-01",
+      "memberId": "m20"
+    },
+    {
+      "id": "i112ko01g",
+      "type": "INCOME",
+      "amount": 1600000,
+      "description": "Đóng quỹ",
+      "category": "Đóng quỹ định kỳ",
+      "recipient": "",
+      "date": "2025-12-01",
+      "memberId": "wpfc3zssk"
+    },
+    {
+      "id": "qh8zwmflz",
+      "type": "EXPENSE",
+      "amount": 1760000,
+      "description": "Tất niên 2025 (1580k tiền ăn, 180k tiền rượu)",
+      "category": "Ăn uống",
+      "recipient": "",
+      "date": "2025-12-28",
+      "memberId": "m20"
+    },
+    {
+      "id": "g2n35oh5s",
+      "type": "EXPENSE",
+      "amount": 200000,
+      "description": "Sinh nhật",
+      "category": "Sự kiện",
+      "recipient": "Nguyễn Duy Thắng",
+      "date": "2026-01-02",
+      "memberId": "m22"
+    },
+    {
+      "id": "v36qid1nv",
+      "type": "INCOME",
+      "amount": 196000,
+      "description": "Lãi ngân hàng",
+      "category": "Tiền lãi",
+      "recipient": "",
+      "date": "2026-01-16",
+      "memberId": "m20"
+    },
+    {
+      "id": "1uc627jcw",
+      "type": "INCOME",
+      "amount": 1800000,
+      "description": "Đóng quỹ tháng 2/2026",
+      "category": "Đóng quỹ định kỳ",
+      "recipient": "",
+      "date": "2026-02-16",
+      "memberId": "m22"
+    },
+    {
+      "id": "98osuazm6",
+      "type": "EXPENSE",
+      "amount": 400000,
+      "description": "Bánh sn Hiếu và Như Thắng",
+      "category": "Sự kiện",
+      "recipient": "",
+      "date": "2026-03-12",
+      "memberId": "m22"
+    },
+    {
+      "id": "3nan1n3ps",
+      "type": "INCOME",
+      "amount": 1800000,
+      "description": "Quỹ tháng 3 2026",
+      "category": "Đóng quỹ định kỳ",
+      "recipient": "",
+      "date": "2026-03-16",
+      "memberId": "m22"
+    },
+    {
+      "id": "a8rz89fi2",
+      "type": "EXPENSE",
+      "amount": 200000,
+      "description": "Sn Xuân",
+      "category": "Sự kiện",
+      "recipient": "Vũ Đình Xuân",
+      "date": "2026-04-08",
+      "memberId": "m22"
+    },
+    {
+      "id": "9mwo3bb00",
+      "type": "INCOME",
+      "amount": 1800000,
+      "description": "Quỹ tháng 4",
+      "category": "Đóng quỹ định kỳ",
+      "recipient": "",
+      "date": "2026-04-15",
+      "memberId": "m22"
+    }
+  ]
+}
