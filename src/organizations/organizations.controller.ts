@@ -17,11 +17,11 @@ import { OrgMemberGuard } from '../common/guards/org-member.guard';
 import { OrgAdminGuard } from '../common/guards/org-admin.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
 
-@UseGuards(JwtAuthGuard)
 @Controller('organizations')
 export class OrganizationsController {
   constructor(private readonly svc: OrganizationsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   create(
     @Body() dto: CreateOrganizationDto,
@@ -30,28 +30,40 @@ export class OrganizationsController {
     return this.svc.create(dto, user.userId);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Get('mine')
   findMine(@CurrentUser() user: { userId: string }) {
     return this.svc.findMine(user.userId);
   }
 
+  // Public — không cần đăng nhập
   @Get('by-slug/:slug')
   findBySlug(@Param('slug') slug: string) {
     return this.svc.findBySlug(slug);
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get(':orgSlug/my-role')
+  getMyRole(
+    @Param('orgSlug') orgSlug: string,
+    @CurrentUser() user: { userId: string },
+  ) {
+    return this.svc.getMyRole(orgSlug, user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.svc.findOne(id);
   }
 
-  @UseGuards(OrgMemberGuard)
+  @UseGuards(JwtAuthGuard, OrgMemberGuard)
   @Get(':orgId/users')
   getMembers(@Param('orgId') orgId: string) {
     return this.svc.getMembers(orgId);
   }
 
-  @UseGuards(OrgMemberGuard, OrgAdminGuard)
+  @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post(':orgId/users')
   inviteUser(
     @Param('orgId') orgId: string,
@@ -60,7 +72,7 @@ export class OrganizationsController {
     return this.svc.inviteUser(orgId, dto);
   }
 
-  @UseGuards(OrgMemberGuard, OrgAdminGuard)
+  @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Delete(':orgId/users/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeUser(

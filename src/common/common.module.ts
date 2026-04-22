@@ -4,10 +4,11 @@ import { OrganizationUser } from '../entities/organization-user.entity';
 import { Organization } from '../entities/organization.entity';
 import { OrgMemberGuard } from './guards/org-member.guard';
 import { OrgAdminGuard } from './guards/org-admin.guard';
+import { OrgSlugGuard } from './guards/org-slug.guard';
 
 @Module({
   imports: [TypeOrmModule.forFeature([OrganizationUser, Organization])],
-  providers: [OrgMemberGuard, OrgAdminGuard],
-  exports: [OrgMemberGuard, OrgAdminGuard, TypeOrmModule],
+  providers: [OrgMemberGuard, OrgAdminGuard, OrgSlugGuard],
+  exports: [OrgMemberGuard, OrgAdminGuard, OrgSlugGuard, TypeOrmModule],
 })
 export class CommonModule {}

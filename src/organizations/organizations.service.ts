@@ -94,4 +94,15 @@ export class OrganizationsService {
     if (!ou) throw new NotFoundException('User not in organization');
     await this.ouRepo.remove(ou);
   }
+
+  async getMyRole(orgSlug: string, userId: string): Promise<{ role: string | null }> {
+    const org = await this.orgRepo.findOne({ where: { slug: orgSlug } });
+    if (!org) return { role: null };
+
+    const membership = await this.ouRepo.findOne({
+      where: { userId, organizationId: org.id },
+    });
+
+    return { role: membership?.role ?? null };
+  }
 }
