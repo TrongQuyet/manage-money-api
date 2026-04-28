@@ -127,7 +127,7 @@ async function seedCategories(orgId: string): Promise<Map<string, string>> {
   for (const cat of DEFAULT_CATEGORIES) {
     const id = generateUuid();
     await dataSource.query(
-      `INSERT INTO categories (id, name, type, isDefault, isActive, organization_id, created_at)
+      `INSERT INTO categories (id, name, type, isDefault, isActive, organization_id, createdAt)
        VALUES (?, ?, ?, 1, 1, ?, NOW())`,
       [id, cat.name, cat.type, orgId],
     );
