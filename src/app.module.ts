@@ -6,6 +6,7 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { MembersModule } from './members/members.module';
 import { TransactionsModule } from './transactions/transactions.module';
 import { CategoriesModule } from './categories/categories.module';
+import { OrgSettingsModule } from './org-settings/org-settings.module';
 import { Organization } from './entities/organization.entity';
 import { User } from './entities/user.entity';
 import { OrganizationUser } from './entities/organization-user.entity';
@@ -13,6 +14,7 @@ import { Member } from './entities/member.entity';
 import { Transaction } from './entities/transaction.entity';
 import { Category } from './entities/category.entity';
 import { RefreshToken } from './entities/refresh-token.entity';
+import { OrgSetting } from './entities/org-setting.entity';
 
 @Module({
   imports: [
@@ -35,6 +37,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
           Transaction,
           Category,
           RefreshToken,
+          OrgSetting,
         ],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
         charset: 'utf8mb4',
@@ -46,6 +49,7 @@ import { RefreshToken } from './entities/refresh-token.entity';
     MembersModule,
     TransactionsModule,
     CategoriesModule,
+    OrgSettingsModule,
   ],
 })
 export class AppModule {}
