@@ -1,169 +1,74 @@
-# manage-money-api
+"" 
+# CLAUDE.md
 
-NestJS REST API cho ứng dụng quản lý quỹ nhóm. Hỗ trợ nhiều tổ chức (multi-tenant) với phân quyền theo tổ chức.
+Behavioral guidelines to reduce common LLM coding mistakes. Merge with project-specific instructions as needed.
 
-## Lệnh thường dùng
+**Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
 
-```bash
-npm run start:dev          # Chạy dev server với hot-reload (port 3334)
-npm run build              # Build production → dist/
-npm start                  # Chạy bản đã build
-npm run lint               # Kiểm tra ESLint
+## 1. Think Before Coding
+
+**Don't assume. Don't hide confusion. Surface tradeoffs.**
+
+Before implementing:
+- State your assumptions explicitly. If uncertain, ask.
+- If multiple interpretations exist, present them - don't pick silently.
+- If a simpler approach exists, say so. Push back when warranted.
+- If something is unclear, stop. Name what's confusing. Ask.
+
+## 2. Simplicity First
+
+**Minimum code that solves the problem. Nothing speculative.**
+
+- No features beyond what was asked.
+- No abstractions for single-use code.
+- No "flexibility" or "configurability" that wasn't requested.
+- No error handling for impossible scenarios.
+- If you write 200 lines and it could be 50, rewrite it.
+
+Ask yourself: "Would a senior engineer say this is overcomplicated?" If yes, simplify.
+
+## 3. Surgical Changes
+
+**Touch only what you must. Clean up only your own mess.**
+
+When editing existing code:
+- Don't "improve" adjacent code, comments, or formatting.
+- Don't refactor things that aren't broken.
+- Match existing style, even if you'd do it differently.
+- If you notice unrelated dead code, mention it - don't delete it.
+
+When your changes create orphans:
+- Remove imports/variables/functions that YOUR changes made unused.
+- Don't remove pre-existing dead code unless asked.
+
+The test: Every changed line should trace directly to the user's request.
+
+## 4. Goal-Driven Execution
+
+**Define success criteria. Loop until verified.**
+
+Transform tasks into verifiable goals:
+- "Add validation" → "Write tests for invalid inputs, then make them pass"
+- "Fix the bug" → "Write a test that reproduces it, then make it pass"
+- "Refactor X" → "Ensure tests pass before and after"
+
+For multi-step tasks, state a brief plan:
+```
+1. [Step] → verify: [check]
+2. [Step] → verify: [check]
+3. [Step] → verify: [check]
 ```
 
-**Import dữ liệu tổ chức mới:**
-```bash
-npx ts-node src/migrations/import-org.ts src/migrations/data/<file>.json
-```
+Strong success criteria let you loop independently. Weak criteria ("make it work") require constant clarification.
 
-**Migrations:**
-```bash
-npx ts-node src/migrations/seed-org-slugs.ts   # Backfill slug cho org cũ
-```
+---
 
-## Tech stack
+**These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
 
-- **Framework**: NestJS 10 + TypeScript
-- **Database**: MySQL 8+ via TypeORM 0.3
-- **Auth**: Passport.js + JWT (httpOnly cookies)
-- **Password**: bcrypt (salt rounds: 12)
-- **Validation**: class-validator + class-transformer
-- **Utilities**: slugify, cookie-parser
+## 5. Project Reference
 
-## Cấu trúc thư mục
+**Read `.claude/instructions.md` when needed** — tech stack, file structure, design system, API endpoints, dev commands.
 
-```
-src/
-├── auth/                        # Đăng ký, đăng nhập, JWT refresh
-│   ├── guards/                  # JwtAuthGuard, JwtRefreshGuard
-│   └── strategies/              # JwtStrategy (đọc cookie access_token)
-├── entities/                    # TypeORM entities
-│   ├── user.entity.ts
-│   ├── organization.entity.ts
-│   ├── organization-user.entity.ts   # Bảng nối user ↔ org (OWNER/ADMIN/MEMBER)
-│   ├── member.entity.ts              # Thành viên của quỹ
-│   ├── transaction.entity.ts         # Thu chi
-│   ├── category.entity.ts            # Danh mục thu chi
-│   └── refresh-token.entity.ts
-├── organizations/               # CRUD tổ chức, mời user
-├── members/                     # CRUD thành viên
-├── transactions/                # CRUD giao dịch
-├── categories/                  # CRUD danh mục
-├── common/
-│   ├── guards/
-│   │   ├── org-member.guard.ts  # Xác nhận user thuộc org, set req.orgId
-│   │   └── org-admin.guard.ts   # Xác nhận role OWNER hoặc ADMIN
-│   └── decorators/
-│       ├── current-user.decorator.ts
-│       └── org-id.decorator.ts
-├── migrations/
-│   ├── data/                    # File JSON dữ liệu từng tổ chức
-│   │   ├── trum-a9.json
-│   │   └── lien-trung.json
-│   ├── import-org.ts            # Script import tổ chức từ JSON
-│   └── seed-org-slugs.ts
-└── app.module.ts                # TypeORM config, import các module
-```
+Read when: the task involves an unfamiliar file/module, you need design tokens, or you need dev/docker commands.
 
-## Environment variables
-
-Tạo file `.env` ở root:
-
-```env
-NODE_ENV=development
-PORT=3334
-
-DB_HOST=localhost
-DB_PORT=3308
-DB_NAME=manage_money
-DB_USER=root
-DB_PASSWORD=
-
-JWT_ACCESS_SECRET=<64-byte hex>
-JWT_REFRESH_SECRET=<64-byte hex>
-REGISTRATION_SECRET=manage_money_register_2026
-```
-
-Tạo JWT secret:
-```bash
-node -e "console.log(require('crypto').randomBytes(64).toString('hex'))"
-```
-
-## Database
-
-**MySQL cần chạy trước** (port 3308). Tạo database:
-```sql
-CREATE DATABASE manage_money CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-`synchronize: true` trong dev — TypeORM tự tạo/cập nhật bảng khi chạy.  
-`synchronize: false` trong production — cần migration thủ công.
-
-**Lưu ý tên cột**: TypeORM không áp dụng naming strategy nên cột camelCase giữ nguyên (`createdAt`, `joinedAt`, `isDefault`). Cột FK dùng `@JoinColumn({ name: '...' })` nên là snake_case (`organization_id`, `member_id`).
-
-## API Endpoints
-
-Base URL: `http://localhost:3334/api`
-
-| Method | Route | Guard | Mô tả |
-|--------|-------|-------|-------|
-| POST | `/auth/register` | — | Đăng ký (cần `REGISTRATION_SECRET`) |
-| POST | `/auth/login` | — | Đăng nhập → set cookies |
-| POST | `/auth/logout` | — | Đăng xuất |
-| POST | `/auth/refresh` | JwtRefresh | Làm mới token |
-| GET | `/auth/me` | Jwt | Thông tin user hiện tại |
-| POST | `/organizations` | Jwt | Tạo tổ chức |
-| GET | `/organizations/mine` | Jwt | Danh sách org của user |
-| GET | `/organizations/by-slug/:slug` | — | Tìm org theo slug |
-| GET | `/:orgSlug/members` | Jwt + OrgMember | Danh sách thành viên |
-| POST | `/:orgSlug/members` | Jwt + OrgAdmin | Thêm thành viên |
-| PUT | `/:orgSlug/members/:id` | Jwt + OrgAdmin | Sửa thành viên |
-| DELETE | `/:orgSlug/members/:id` | Jwt + OrgAdmin | Xóa thành viên |
-| GET | `/:orgSlug/transactions` | Jwt + OrgMember | Danh sách giao dịch |
-| GET | `/:orgSlug/transactions/summary` | Jwt + OrgMember | Tổng thu/chi/tồn |
-| POST | `/:orgSlug/transactions` | Jwt + OrgAdmin | Thêm giao dịch |
-| PUT | `/:orgSlug/transactions/:id` | Jwt + OrgAdmin | Sửa giao dịch |
-| DELETE | `/:orgSlug/transactions/:id` | Jwt + OrgAdmin | Xóa giao dịch |
-| GET | `/:orgSlug/categories` | Jwt + OrgMember | Danh mục |
-| POST | `/:orgSlug/categories/seed` | Jwt + OrgMember | Tạo danh mục mặc định |
-| POST | `/:orgSlug/categories` | Jwt + OrgAdmin | Tạo danh mục tùy chỉnh |
-
-## Luồng xác thực
-
-1. Login → JWT access token (15 phút) + refresh token (7 ngày) lưu trong httpOnly cookie
-2. Mỗi request bảo vệ → `JwtStrategy` đọc `request.cookies.access_token`
-3. Khi access token hết hạn → frontend gọi `/auth/refresh` tự động
-4. Refresh token được lưu hash trong bảng `refresh_tokens`, bị revoke sau mỗi lần dùng
-
-## Multi-tenant
-
-Mỗi tổ chức cô lập hoàn toàn qua `organization_id`:
-- URL dùng `orgSlug` để định danh tổ chức
-- `OrgMemberGuard` tra cứu org theo slug, set `req.orgId` và `req.orgRole`
-- `OrgAdminGuard` chặn nếu role là MEMBER (chỉ cho phép OWNER/ADMIN)
-
-**Mỗi admin chỉ quản lý một tổ chức** — được kiểm soát qua bảng `organization_users`.
-
-## Import dữ liệu tổ chức mới
-
-Tạo file JSON theo cấu trúc trong `src/migrations/data/trum-a9.json`, rồi chạy:
-
-```bash
-npx ts-node src/migrations/import-org.ts src/migrations/data/<file>.json
-```
-
-Script tự động:
-- Bỏ qua nếu tổ chức/thành viên đã tồn tại (idempotent)
-- Tạo username admin độc lập nếu trùng với username đã dùng cho org khác
-- Map `memberId` cũ → UUID mới cho giao dịch
-- Seed 10 danh mục mặc định
-
-## Docker
-
-```bash
-# Dev (hot-reload)
-docker compose -f docker-compose.dev.yml up -d --build
-
-# Production
-docker compose up -d --build
-```
+**Skip it** when the task has enough context from the current code or the user's message.
