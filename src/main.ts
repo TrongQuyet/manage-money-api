@@ -4,9 +4,11 @@ import { AppModule } from './app.module';
 import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { bodyParser: false });
 
   app.use(cookieParser());
+  // Base64 dashboard images can be several MB
+  app.use(require('express').json({ limit: '10mb' }));
 
   app.useGlobalPipes(
     new ValidationPipe({
