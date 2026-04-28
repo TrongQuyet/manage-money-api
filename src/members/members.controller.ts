@@ -13,11 +13,13 @@ import {
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
+import { UpdateSelfMemberDto } from './dto/update-self-member.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OrgMemberGuard } from '../common/guards/org-member.guard';
 import { OrgAdminGuard } from '../common/guards/org-admin.guard';
 import { OrgSlugGuard } from '../common/guards/org-slug.guard';
 import { OrgId } from '../common/decorators/org-id.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller(':orgSlug/members')
 export class MembersController {
@@ -27,6 +29,25 @@ export class MembersController {
   @Get()
   findAll(@OrgId() orgId: string) {
     return this.svc.findAll(orgId);
+  }
+
+  @UseGuards(JwtAuthGuard, OrgMemberGuard)
+  @Get('self')
+  getSelf(
+    @OrgId() orgId: string,
+    @CurrentUser() user: { userId: string },
+  ) {
+    return this.svc.findByUserId(orgId, user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard, OrgMemberGuard)
+  @Put('self')
+  updateSelf(
+    @OrgId() orgId: string,
+    @CurrentUser() user: { userId: string },
+    @Body() dto: UpdateSelfMemberDto,
+  ) {
+    return this.svc.updateSelf(orgId, user.userId, dto);
   }
 
   @UseGuards(OrgSlugGuard)

@@ -40,6 +40,9 @@ export class Member {
   @Column({ type: 'text', nullable: true })
   note: string;
 
+  @Column({ name: 'user_id', nullable: true, length: 36 })
+  userId: string | null;
+
   @CreateDateColumn()
   joinedAt: Date;
 
