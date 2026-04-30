@@ -24,7 +24,7 @@ export class TransactionsService {
       .leftJoinAndSelect('tx.category', 'category')
       .where('tx.organization_id = :orgId', { orgId })
       .orderBy('tx.date', 'DESC')
-      .addOrderBy('tx.created_at', 'DESC');
+      .addOrderBy('tx.createdAt', 'DESC');
 
     if (search?.trim()) {
       qb.andWhere(

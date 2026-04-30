@@ -26,7 +26,7 @@ export class MembersService {
     const qb = this.memberRepo
       .createQueryBuilder('m')
       .where('m.organization_id = :orgId', { orgId })
-      .orderBy('m.joined_at', 'ASC');
+      .orderBy('m.joinedAt', 'ASC');
 
     if (search?.trim()) {
       qb.andWhere(
