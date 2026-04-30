@@ -68,13 +68,6 @@ const dataSource = new DataSource({
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function generateUuid(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replaceAll(/[xy]/g, (c) => {
-    const r = Math.trunc(Math.random() * 16);
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16);
-  });
-}
-
 async function generateUniqueSlug(name: string, preferred?: string): Promise<string> {
   const base =
     preferred ||
@@ -84,7 +77,7 @@ async function generateUniqueSlug(name: string, preferred?: string): Promise<str
   let candidate = base;
   let counter = 2;
   while (true) {
-    const rows: { id: string }[] = await dataSource.query(
+    const rows: { id: number }[] = await dataSource.query(
       'SELECT id FROM organizations WHERE slug = ?',
       [candidate],
     );
@@ -108,11 +101,11 @@ const DEFAULT_CATEGORIES = [
   { name: 'Khác', type: 'EXPENSE' },
 ];
 
-async function seedCategories(orgId: string): Promise<Map<string, string>> {
+async function seedCategories(orgId: number): Promise<Map<string, number>> {
   // key: "name|type" → categoryId
-  const categoryMap = new Map<string, string>();
+  const categoryMap = new Map<string, number>();
 
-  const existing: { id: string; name: string; type: string }[] =
+  const existing: { id: number; name: string; type: string }[] =
     await dataSource.query(
       'SELECT id, name, type FROM categories WHERE organization_id = ? AND isDefault = 1',
       [orgId],
@@ -125,13 +118,12 @@ async function seedCategories(orgId: string): Promise<Map<string, string>> {
   }
 
   for (const cat of DEFAULT_CATEGORIES) {
-    const id = generateUuid();
-    await dataSource.query(
-      `INSERT INTO categories (id, name, type, isDefault, isActive, organization_id, createdAt)
-       VALUES (?, ?, ?, 1, 1, ?, NOW())`,
-      [id, cat.name, cat.type, orgId],
+    const result = await dataSource.query(
+      `INSERT INTO categories (name, type, isDefault, isActive, organization_id, createdAt)
+       VALUES (?, ?, 1, 1, ?, NOW())`,
+      [cat.name, cat.type, orgId],
     );
-    categoryMap.set(`${cat.name}|${cat.type}`, id);
+    categoryMap.set(`${cat.name}|${cat.type}`, result.insertId);
   }
   console.log(`  [categories] Đã seed ${DEFAULT_CATEGORIES.length} danh mục mặc định.`);
   return categoryMap;
@@ -158,8 +150,8 @@ async function run() {
   console.log('\n=== Bắt đầu import ===\n');
 
   // ── 1. Tổ chức ──────────────────────────────────────────────────────────────
-  let orgId: string;
-  const existingOrg: { id: string }[] = await dataSource.query(
+  let orgId: number;
+  const existingOrg: { id: number }[] = await dataSource.query(
     'SELECT id FROM organizations WHERE name = ?',
     [data.organization.name],
   );
@@ -168,62 +160,58 @@ async function run() {
     orgId = existingOrg[0].id;
     console.log(`[org] Tổ chức "${data.organization.name}" đã tồn tại (id: ${orgId}), bỏ qua.`);
   } else {
-    orgId = generateUuid();
     const slug = await generateUniqueSlug(data.organization.name, data.organization.slug);
-    await dataSource.query(
-      `INSERT INTO organizations (id, name, slug, description, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, NOW(), NOW())`,
-      [orgId, data.organization.name, slug, data.organization.description || null],
+    const result = await dataSource.query(
+      `INSERT INTO organizations (name, slug, description, createdAt, updatedAt)
+       VALUES (?, ?, ?, NOW(), NOW())`,
+      [data.organization.name, slug, data.organization.description || null],
     );
+    orgId = result.insertId;
     console.log(`[org] Đã tạo tổ chức "${data.organization.name}" (slug: ${slug}, id: ${orgId})`);
   }
 
   // ── 2. Admin user ────────────────────────────────────────────────────────────
-  // Lưu ý: MySQL không phân biệt hoa/thường nên "Admin" = "admin".
-  // Nếu username đã tồn tại VÀ đã thuộc org khác → tự thêm suffix từ org slug.
-  let userId: string;
+  let userId: number;
   let resolvedUsername = data.admin.user_name;
 
-  const existingUser: { id: string; user_name: string }[] = await dataSource.query(
+  const existingUser: { id: number; user_name: string }[] = await dataSource.query(
     'SELECT id, user_name FROM users WHERE user_name = ?',
     [data.admin.user_name],
   );
 
   if (existingUser.length > 0) {
     const existingId = existingUser[0].id;
-    // Kiểm tra user này đã thuộc org nào khác chưa
-    const otherOrgLinks: { id: string }[] = await dataSource.query(
+    const otherOrgLinks: { id: number }[] = await dataSource.query(
       'SELECT id FROM organization_users WHERE user_id = ? AND organization_id != ?',
       [existingId, orgId],
     );
 
     if (otherOrgLinks.length > 0) {
-      // Username đã dùng cho org khác → tạo username mới có suffix từ org slug
-      const orgSlug = (await dataSource.query('SELECT slug FROM organizations WHERE id = ?', [orgId]))[0]?.slug || orgId.substring(0, 8);
+      const orgSlug = (await dataSource.query('SELECT slug FROM organizations WHERE id = ?', [orgId]))[0]?.slug || `org${orgId}`;
       resolvedUsername = `${data.admin.user_name}-${orgSlug}`;
-      userId = generateUuid();
       const hashedPassword = await bcrypt.hash(data.admin.password, 12);
-      await dataSource.query(
-        `INSERT INTO users (id, user_name, password, createdAt) VALUES (?, ?, ?, NOW())`,
-        [userId, resolvedUsername, hashedPassword],
+      const result = await dataSource.query(
+        `INSERT INTO users (user_name, password, createdAt) VALUES (?, ?, NOW())`,
+        [resolvedUsername, hashedPassword],
       );
+      userId = result.insertId;
       console.log(`[admin] Username "${data.admin.user_name}" đã dùng cho org khác → tạo mới "${resolvedUsername}" (id: ${userId})`);
     } else {
       userId = existingId;
       console.log(`[admin] User "${data.admin.user_name}" đã tồn tại (id: ${userId}), bỏ qua tạo mới.`);
     }
   } else {
-    userId = generateUuid();
     const hashedPassword = await bcrypt.hash(data.admin.password, 12);
-    await dataSource.query(
-      `INSERT INTO users (id, user_name, password, createdAt) VALUES (?, ?, ?, NOW())`,
-      [userId, resolvedUsername, hashedPassword],
+    const result = await dataSource.query(
+      `INSERT INTO users (user_name, password, createdAt) VALUES (?, ?, NOW())`,
+      [resolvedUsername, hashedPassword],
     );
+    userId = result.insertId;
     console.log(`[admin] Đã tạo user "${resolvedUsername}" (id: ${userId})`);
   }
 
   // ── 3. Liên kết admin → tổ chức (organization_users) ────────────────────────
-  const existingLink: { id: string }[] = await dataSource.query(
+  const existingLink: { id: number }[] = await dataSource.query(
     'SELECT id FROM organization_users WHERE user_id = ? AND organization_id = ?',
     [userId, orgId],
   );
@@ -231,11 +219,10 @@ async function run() {
   if (existingLink.length > 0) {
     console.log(`[org-user] Admin đã được liên kết với tổ chức, bỏ qua.`);
   } else {
-    const linkId = generateUuid();
     await dataSource.query(
-      `INSERT INTO organization_users (id, role, user_id, organization_id, joinedAt)
-       VALUES (?, 'owner', ?, ?, NOW())`,
-      [linkId, userId, orgId],
+      `INSERT INTO organization_users (role, user_id, organization_id, joinedAt)
+       VALUES ('owner', ?, ?, NOW())`,
+      [userId, orgId],
     );
     console.log(`[org-user] Đã liên kết admin với tổ chức (role: owner)`);
   }
@@ -244,11 +231,10 @@ async function run() {
   const categoryMap = await seedCategories(orgId);
 
   // ── 5. Thành viên ────────────────────────────────────────────────────────────
-  // oldId (từ JSON) → newUUID (trong DB)
-  const memberIdMap = new Map<string, string>();
+  // oldId (từ JSON) → newId (trong DB)
+  const memberIdMap = new Map<string, number>();
 
-  // Load thành viên đã có để check trùng
-  const existingMembers: { id: string; name: string }[] = await dataSource.query(
+  const existingMembers: { id: number; name: string }[] = await dataSource.query(
     'SELECT id, name FROM members WHERE organization_id = ?',
     [orgId],
   );
@@ -259,21 +245,16 @@ async function run() {
 
   for (const member of data.members) {
     if (existingMemberNames.has(member.name)) {
-      // Tìm UUID tương ứng để map giao dịch
       const found = existingMembers.find((m) => m.name === member.name);
       if (found) memberIdMap.set(member.id, found.id);
       membersSkipped++;
       continue;
     }
 
-    const newMemberId = generateUuid();
-    memberIdMap.set(member.id, newMemberId);
-
-    await dataSource.query(
-      `INSERT INTO members (id, name, email, phone, address, role, note, organization_id, joinedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    const result = await dataSource.query(
+      `INSERT INTO members (name, email, phone, address, role, note, organization_id, joinedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-        newMemberId,
         member.name,
         member.email || null,
         member.phone || null,
@@ -284,6 +265,7 @@ async function run() {
         member.joinedAt ? new Date(member.joinedAt) : new Date(),
       ],
     );
+    memberIdMap.set(member.id, result.insertId);
     membersCreated++;
   }
 
@@ -294,22 +276,20 @@ async function run() {
   let txSkipped = 0;
 
   for (const tx of data.transactions) {
-    const resolvedMemberId = tx.memberId ? memberIdMap.get(tx.memberId) || null : null;
+    const resolvedMemberId = tx.memberId ? memberIdMap.get(tx.memberId) ?? null : null;
 
-    // Tìm categoryId theo tên + type
     const categoryKey = `${tx.category || 'Khác'}|${tx.type}`;
-    const categoryId = categoryMap.get(categoryKey) || null;
+    const categoryId = categoryMap.get(categoryKey) ?? null;
 
-    // Kiểm tra trùng: cùng ngày + mô tả + số tiền + thành viên trong org
-    const existing: { id: string }[] = await dataSource.query(
+    const existing: { id: number }[] = await dataSource.query(
       `SELECT id FROM transactions
-       WHERE organization_id = ? AND date = ? AND description = ? AND amount = ? AND COALESCE(member_id, '') = ?`,
+       WHERE organization_id = ? AND date = ? AND description = ? AND amount = ? AND COALESCE(member_id, 0) = ?`,
       [
         orgId,
         tx.date,
         tx.description,
         tx.amount,
-        resolvedMemberId || '',
+        resolvedMemberId ?? 0,
       ],
     );
 
@@ -318,12 +298,10 @@ async function run() {
       continue;
     }
 
-    const newTxId = generateUuid();
     await dataSource.query(
-      `INSERT INTO transactions (id, type, amount, description, recipient, date, organization_id, member_id, category_id, createdAt, updatedAt)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
+      `INSERT INTO transactions (type, amount, description, recipient, date, organization_id, member_id, category_id, createdAt, updatedAt)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [
-        newTxId,
         tx.type,
         tx.amount,
         tx.description,

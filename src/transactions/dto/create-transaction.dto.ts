@@ -6,7 +6,6 @@ import {
   IsString,
   IsOptional,
   IsDateString,
-  IsUUID,
   MaxLength,
 } from 'class-validator';
 import { TransactionType } from '../../entities/category.entity';
@@ -23,9 +22,9 @@ export class CreateTransactionDto {
   @IsNotEmpty()
   description: string;
 
-  @IsUUID()
+  @IsNumber()
   @IsOptional()
-  categoryId?: string;
+  categoryId?: number;
 
   @IsString()
   @IsOptional()
@@ -35,7 +34,7 @@ export class CreateTransactionDto {
   @IsDateString()
   date: string;
 
-  @IsUUID()
+  @IsNumber()
   @IsOptional()
-  memberId?: string;
+  memberId?: number;
 }

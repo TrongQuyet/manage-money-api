@@ -17,14 +17,14 @@ export class MembersService {
     @InjectRepository(OrganizationUser) private readonly ouRepo: Repository<OrganizationUser>,
   ) {}
 
-  async findAll(orgId: string): Promise<Member[]> {
+  async findAll(orgId: number): Promise<Member[]> {
     return this.memberRepo.find({
       where: { organizationId: orgId },
       order: { joinedAt: 'ASC' },
     });
   }
 
-  async findOne(orgId: string, id: string): Promise<Member> {
+  async findOne(orgId: number, id: number): Promise<Member> {
     const member = await this.memberRepo.findOne({
       where: { id, organizationId: orgId },
     });
@@ -32,8 +32,8 @@ export class MembersService {
     return member;
   }
 
-  async create(orgId: string, dto: CreateMemberDto): Promise<Member> {
-    let userId: string | null = null;
+  async create(orgId: number, dto: CreateMemberDto): Promise<Member> {
+    let userId: number | null = null;
 
     if (dto.email) {
       let user = await this.userRepo.findOne({ where: { user_name: dto.email } });
@@ -61,22 +61,22 @@ export class MembersService {
     return this.memberRepo.save(member);
   }
 
-  async update(orgId: string, id: string, dto: UpdateMemberDto): Promise<Member> {
+  async update(orgId: number, id: number, dto: UpdateMemberDto): Promise<Member> {
     const member = await this.findOne(orgId, id);
     Object.assign(member, dto);
     return this.memberRepo.save(member);
   }
 
-  async remove(orgId: string, id: string): Promise<void> {
+  async remove(orgId: number, id: number): Promise<void> {
     const result = await this.memberRepo.delete({ id, organizationId: orgId });
     if (result.affected === 0) throw new NotFoundException('Member not found');
   }
 
-  async findByUserId(orgId: string, userId: string): Promise<Member | null> {
+  async findByUserId(orgId: number, userId: number): Promise<Member | null> {
     return this.memberRepo.findOne({ where: { organizationId: orgId, userId } });
   }
 
-  async updateSelf(orgId: string, userId: string, dto: UpdateSelfMemberDto): Promise<Member> {
+  async updateSelf(orgId: number, userId: number, dto: UpdateSelfMemberDto): Promise<Member> {
     const member = await this.findByUserId(orgId, userId);
     if (!member) throw new NotFoundException('Không tìm thấy thông tin thành viên của bạn');
     Object.assign(member, dto);

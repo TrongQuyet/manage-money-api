@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
@@ -27,14 +28,14 @@ export class OrganizationsController {
   @Post()
   create(
     @Body() dto: CreateOrganizationDto,
-    @CurrentUser() user: { userId: string },
+    @CurrentUser() user: { userId: number },
   ) {
     return this.svc.create(dto, user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get('mine')
-  findMine(@CurrentUser() user: { userId: string }) {
+  findMine(@CurrentUser() user: { userId: number }) {
     return this.svc.findMine(user.userId);
   }
 
@@ -48,27 +49,27 @@ export class OrganizationsController {
   @Get(':orgSlug/my-role')
   getMyRole(
     @Param('orgSlug') orgSlug: string,
-    @CurrentUser() user: { userId: string },
+    @CurrentUser() user: { userId: number },
   ) {
     return this.svc.getMyRole(orgSlug, user.userId);
   }
 
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', ParseIntPipe) id: number) {
     return this.svc.findOne(id);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard)
   @Get(':orgId/users')
-  getMembers(@Param('orgId') orgId: string) {
+  getMembers(@Param('orgId', ParseIntPipe) orgId: number) {
     return this.svc.getMembers(orgId);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post(':orgId/users')
   inviteUser(
-    @Param('orgId') orgId: string,
+    @Param('orgId', ParseIntPipe) orgId: number,
     @Body() dto: InviteUserDto,
   ) {
     return this.svc.inviteUser(orgId, dto);
@@ -77,8 +78,8 @@ export class OrganizationsController {
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Put(':orgId/users/:userId/role')
   updateUserRole(
-    @Param('orgId') orgId: string,
-    @Param('userId') userId: string,
+    @Param('orgId', ParseIntPipe) orgId: number,
+    @Param('userId', ParseIntPipe) userId: number,
     @Body('role') role: OrgUserRole,
   ) {
     return this.svc.updateUserRole(orgId, userId, role);
@@ -88,8 +89,8 @@ export class OrganizationsController {
   @Delete(':orgId/users/:userId')
   @HttpCode(HttpStatus.NO_CONTENT)
   removeUser(
-    @Param('orgId') orgId: string,
-    @Param('userId') userId: string,
+    @Param('orgId', ParseIntPipe) orgId: number,
+    @Param('userId', ParseIntPipe) userId: number,
   ) {
     return this.svc.removeUser(orgId, userId);
   }

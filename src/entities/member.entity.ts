@@ -19,8 +19,8 @@ export enum MemberRole {
 
 @Entity('members')
 export class Member {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ length: 100 })
   name: string;
@@ -40,8 +40,8 @@ export class Member {
   @Column({ type: 'text', nullable: true })
   note: string;
 
-  @Column({ name: 'user_id', nullable: true, length: 36 })
-  userId: string | null;
+  @Column({ name: 'user_id', nullable: true })
+  userId: number | null;
 
   @CreateDateColumn()
   joinedAt: Date;
@@ -51,7 +51,7 @@ export class Member {
   organization: Organization;
 
   @Column({ name: 'organization_id' })
-  organizationId: string;
+  organizationId: number;
 
   @OneToMany(() => Transaction, (t) => t.member)
   transactions: Transaction[];

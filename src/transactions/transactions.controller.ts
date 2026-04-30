@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -25,33 +26,33 @@ export class TransactionsController {
 
   @UseGuards(OrgSlugGuard)
   @Get()
-  findAll(@OrgId() orgId: string) {
+  findAll(@OrgId() orgId: number) {
     return this.svc.findAll(orgId);
   }
 
   @UseGuards(OrgSlugGuard)
   @Get('summary')
-  getSummary(@OrgId() orgId: string) {
+  getSummary(@OrgId() orgId: number) {
     return this.svc.getSummary(orgId);
   }
 
   @UseGuards(OrgSlugGuard)
   @Get(':id')
-  findOne(@OrgId() orgId: string, @Param('id') id: string) {
+  findOne(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
     return this.svc.findOne(orgId, id);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post()
-  create(@OrgId() orgId: string, @Body() dto: CreateTransactionDto) {
+  create(@OrgId() orgId: number, @Body() dto: CreateTransactionDto) {
     return this.svc.create(orgId, dto);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Put(':id')
   update(
-    @OrgId() orgId: string,
-    @Param('id') id: string,
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTransactionDto,
   ) {
     return this.svc.update(orgId, id, dto);
@@ -60,7 +61,7 @@ export class TransactionsController {
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@OrgId() orgId: string, @Param('id') id: string) {
+  remove(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
     return this.svc.remove(orgId, id);
   }
 }

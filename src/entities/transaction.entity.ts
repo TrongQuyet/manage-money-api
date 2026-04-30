@@ -16,8 +16,8 @@ export { TransactionType };
 
 @Entity('transactions')
 export class Transaction {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ type: 'enum', enum: TransactionType })
   type: TransactionType;
@@ -39,21 +39,21 @@ export class Transaction {
   organization: Organization;
 
   @Column({ name: 'organization_id' })
-  organizationId: string;
+  organizationId: number;
 
   @ManyToOne(() => Member, (m) => m.transactions, { onDelete: 'SET NULL', nullable: true })
   @JoinColumn({ name: 'member_id' })
   member: Member;
 
   @Column({ name: 'member_id', nullable: true })
-  memberId: string;
+  memberId: number;
 
   @ManyToOne(() => Category, { onDelete: 'SET NULL', nullable: true, eager: true })
   @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @Column({ name: 'category_id', nullable: true })
-  categoryId: string;
+  categoryId: number;
 
   @CreateDateColumn()
   createdAt: Date;

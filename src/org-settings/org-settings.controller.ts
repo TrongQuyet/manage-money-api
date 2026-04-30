@@ -12,14 +12,14 @@ export class OrgSettingsController {
 
   @UseGuards(OrgSlugGuard)
   @Get()
-  getAll(@OrgId() orgId: string) {
+  getAll(@OrgId() orgId: number) {
     return this.svc.getAll(orgId);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Put(':key')
   upsert(
-    @OrgId() orgId: string,
+    @OrgId() orgId: number,
     @Param('key') key: string,
     @Body('value') value: string,
   ) {

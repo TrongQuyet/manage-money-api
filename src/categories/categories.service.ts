@@ -24,13 +24,13 @@ export class CategoriesService {
     @InjectRepository(Category) private categoryRepo: Repository<Category>,
   ) {}
 
-  async findAll(orgId: string, type?: TransactionType): Promise<Category[]> {
+  async findAll(orgId: number, type?: TransactionType): Promise<Category[]> {
     const where: any = { organizationId: orgId, isActive: true };
     if (type) where.type = type;
     return this.categoryRepo.find({ where, order: { isDefault: 'DESC', name: 'ASC' } });
   }
 
-  async create(orgId: string, dto: CreateCategoryDto): Promise<Category> {
+  async create(orgId: number, dto: CreateCategoryDto): Promise<Category> {
     const category = this.categoryRepo.create({
       ...dto,
       organizationId: orgId,
@@ -39,7 +39,7 @@ export class CategoriesService {
     return this.categoryRepo.save(category);
   }
 
-  async update(orgId: string, id: string, dto: UpdateCategoryDto): Promise<Category> {
+  async update(orgId: number, id: number, dto: UpdateCategoryDto): Promise<Category> {
     const category = await this.categoryRepo.findOne({
       where: { id, organizationId: orgId },
     });
@@ -48,12 +48,12 @@ export class CategoriesService {
     return this.categoryRepo.save(category);
   }
 
-  async remove(orgId: string, id: string): Promise<void> {
+  async remove(orgId: number, id: number): Promise<void> {
     const result = await this.categoryRepo.delete({ id, organizationId: orgId });
     if (result.affected === 0) throw new NotFoundException('Category not found');
   }
 
-  async seedDefaults(orgId: string): Promise<Category[]> {
+  async seedDefaults(orgId: number): Promise<Category[]> {
     const existing = await this.categoryRepo.find({
       where: { organizationId: orgId, isDefault: true },
     });

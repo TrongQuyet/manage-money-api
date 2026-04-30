@@ -21,7 +21,7 @@ export class OrgMemberGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const userId: string = request.user?.userId;
+    const userId: number = request.user?.userId;
     const orgSlug: string = request.params?.orgSlug;
 
     if (!userId || !orgSlug) throw new ForbiddenException();

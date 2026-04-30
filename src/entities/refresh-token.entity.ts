@@ -10,8 +10,8 @@ import { User } from './user.entity';
 
 @Entity('refresh_tokens')
 export class RefreshToken {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column()
   tokenHash: string;
@@ -33,5 +33,5 @@ export class RefreshToken {
   user: User;
 
   @Column({ name: 'user_id' })
-  userId: string;
+  userId: number;
 }

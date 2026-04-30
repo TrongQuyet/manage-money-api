@@ -53,7 +53,7 @@ export class AuthService {
     return this.generateTokens(user);
   }
 
-  async refresh(userId: string, rawRefreshToken: string) {
+  async refresh(userId: number, rawRefreshToken: string) {
     const tokens = await this.tokenRepo.find({
       where: { userId, revoked: false },
     });
@@ -79,11 +79,11 @@ export class AuthService {
     return this.generateTokens(user);
   }
 
-  async logout(userId: string) {
+  async logout(userId: number) {
     await this.tokenRepo.update({ userId, revoked: false }, { revoked: true });
   }
 
-  async getMe(userId: string) {
+  async getMe(userId: number) {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) throw new UnauthorizedException();
     const { password, ...safe } = user;

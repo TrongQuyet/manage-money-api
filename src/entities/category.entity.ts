@@ -15,8 +15,8 @@ export enum TransactionType {
 
 @Entity('categories')
 export class Category {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ length: 100 })
   name: string;
@@ -38,5 +38,5 @@ export class Category {
   organization: Organization;
 
   @Column({ name: 'organization_id' })
-  organizationId: string;
+  organizationId: number;
 }

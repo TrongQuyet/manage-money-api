@@ -57,7 +57,7 @@ export class AuthController {
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refresh(
-    @CurrentUser() user: { userId: string; refreshToken: string },
+    @CurrentUser() user: { userId: number; refreshToken: string },
     @Res({ passthrough: true }) res: Response,
   ) {
     const tokens = await this.authService.refresh(user.userId, user.refreshToken);
@@ -78,7 +78,7 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(
-    @CurrentUser() user: { userId: string },
+    @CurrentUser() user: { userId: number },
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.authService.logout(user.userId);
@@ -91,7 +91,7 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard)
   @Get('me')
-  getMe(@CurrentUser() user: { userId: string }) {
+  getMe(@CurrentUser() user: { userId: number }) {
     return this.authService.getMe(user.userId);
   }
 }

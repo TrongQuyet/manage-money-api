@@ -12,7 +12,7 @@ export class TransactionsService {
     @InjectRepository(Transaction) private txRepo: Repository<Transaction>,
   ) {}
 
-  async findAll(orgId: string): Promise<Transaction[]> {
+  async findAll(orgId: number): Promise<Transaction[]> {
     return this.txRepo.find({
       where: { organizationId: orgId },
       relations: ['member', 'category'],
@@ -20,7 +20,7 @@ export class TransactionsService {
     });
   }
 
-  async findOne(orgId: string, id: string): Promise<Transaction> {
+  async findOne(orgId: number, id: number): Promise<Transaction> {
     const tx = await this.txRepo.findOne({
       where: { id, organizationId: orgId },
       relations: ['member', 'category'],
@@ -29,23 +29,23 @@ export class TransactionsService {
     return tx;
   }
 
-  async create(orgId: string, dto: CreateTransactionDto): Promise<Transaction> {
+  async create(orgId: number, dto: CreateTransactionDto): Promise<Transaction> {
     const tx = this.txRepo.create({ ...dto, organizationId: orgId });
     return this.txRepo.save(tx);
   }
 
-  async update(orgId: string, id: string, dto: UpdateTransactionDto): Promise<Transaction> {
+  async update(orgId: number, id: number, dto: UpdateTransactionDto): Promise<Transaction> {
     const tx = await this.findOne(orgId, id);
     Object.assign(tx, dto);
     return this.txRepo.save(tx);
   }
 
-  async remove(orgId: string, id: string): Promise<void> {
+  async remove(orgId: number, id: number): Promise<void> {
     const result = await this.txRepo.delete({ id, organizationId: orgId });
     if (result.affected === 0) throw new NotFoundException('Transaction not found');
   }
 
-  async getSummary(orgId: string) {
+  async getSummary(orgId: number) {
     const result = await this.txRepo
       .createQueryBuilder('tx')
       .select('tx.type', 'type')

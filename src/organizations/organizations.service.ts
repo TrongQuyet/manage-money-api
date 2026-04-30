@@ -26,7 +26,7 @@ export class OrganizationsService {
     return slugify(name, { lower: true, strict: true, locale: 'vi' });
   }
 
-  async create(dto: CreateOrganizationDto, userId: string): Promise<Organization> {
+  async create(dto: CreateOrganizationDto, userId: number): Promise<Organization> {
     const slug = dto.slug ?? this.generateSlug(dto.name);
 
     const existing = await this.orgRepo.findOne({ where: { slug } });
@@ -45,7 +45,7 @@ export class OrganizationsService {
     return saved;
   }
 
-  async findMine(userId: string): Promise<Organization[]> {
+  async findMine(userId: number): Promise<Organization[]> {
     const memberships = await this.ouRepo.find({
       where: { userId },
       relations: ['organization'],
@@ -53,7 +53,7 @@ export class OrganizationsService {
     return memberships.map((m) => m.organization);
   }
 
-  async findOne(id: string): Promise<Organization> {
+  async findOne(id: number): Promise<Organization> {
     const org = await this.orgRepo.findOne({ where: { id } });
     if (!org) throw new NotFoundException('Organization not found');
     return org;
@@ -65,14 +65,14 @@ export class OrganizationsService {
     return org;
   }
 
-  async getMembers(orgId: string) {
+  async getMembers(orgId: number) {
     return this.ouRepo.find({
       where: { organizationId: orgId },
       relations: ['user'],
     });
   }
 
-  async inviteUser(orgId: string, dto: InviteUserDto) {
+  async inviteUser(orgId: number, dto: InviteUserDto) {
     if (dto.role === OrgUserRole.OWNER) {
       throw new BadRequestException('Không thể gán quyền OWNER');
     }
@@ -93,7 +93,7 @@ export class OrganizationsService {
     return this.ouRepo.save(ou);
   }
 
-  async removeUser(orgId: string, userId: string) {
+  async removeUser(orgId: number, userId: number) {
     const ou = await this.ouRepo.findOne({
       where: { organizationId: orgId, userId },
     });
@@ -104,7 +104,7 @@ export class OrganizationsService {
     await this.ouRepo.remove(ou);
   }
 
-  async updateUserRole(orgId: string, targetUserId: string, role: OrgUserRole) {
+  async updateUserRole(orgId: number, targetUserId: number, role: OrgUserRole) {
     if (role === OrgUserRole.OWNER) {
       throw new BadRequestException('Không thể gán quyền OWNER');
     }
@@ -119,7 +119,7 @@ export class OrganizationsService {
     return this.ouRepo.save(ou);
   }
 
-  async getMyRole(orgSlug: string, userId: string): Promise<{ role: string | null }> {
+  async getMyRole(orgSlug: string, userId: number): Promise<{ role: string | null }> {
     const org = await this.orgRepo.findOne({ where: { slug: orgSlug } });
     if (!org) return { role: null };
 

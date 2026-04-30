@@ -9,6 +9,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
@@ -27,15 +28,15 @@ export class MembersController {
 
   @UseGuards(OrgSlugGuard)
   @Get()
-  findAll(@OrgId() orgId: string) {
+  findAll(@OrgId() orgId: number) {
     return this.svc.findAll(orgId);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard)
   @Get('self')
   getSelf(
-    @OrgId() orgId: string,
-    @CurrentUser() user: { userId: string },
+    @OrgId() orgId: number,
+    @CurrentUser() user: { userId: number },
   ) {
     return this.svc.findByUserId(orgId, user.userId);
   }
@@ -43,8 +44,8 @@ export class MembersController {
   @UseGuards(JwtAuthGuard, OrgMemberGuard)
   @Put('self')
   updateSelf(
-    @OrgId() orgId: string,
-    @CurrentUser() user: { userId: string },
+    @OrgId() orgId: number,
+    @CurrentUser() user: { userId: number },
     @Body() dto: UpdateSelfMemberDto,
   ) {
     return this.svc.updateSelf(orgId, user.userId, dto);
@@ -52,21 +53,21 @@ export class MembersController {
 
   @UseGuards(OrgSlugGuard)
   @Get(':id')
-  findOne(@OrgId() orgId: string, @Param('id') id: string) {
+  findOne(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
     return this.svc.findOne(orgId, id);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post()
-  create(@OrgId() orgId: string, @Body() dto: CreateMemberDto) {
+  create(@OrgId() orgId: number, @Body() dto: CreateMemberDto) {
     return this.svc.create(orgId, dto);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Put(':id')
   update(
-    @OrgId() orgId: string,
-    @Param('id') id: string,
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateMemberDto,
   ) {
     return this.svc.update(orgId, id, dto);
@@ -75,7 +76,7 @@ export class MembersController {
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@OrgId() orgId: string, @Param('id') id: string) {
+  remove(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
     return this.svc.remove(orgId, id);
   }
 }

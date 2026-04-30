@@ -13,8 +13,8 @@ import { Organization } from './organization.entity';
 @Entity('org_settings')
 @Unique(['organizationId', 'key'])
 export class OrgSetting {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn()
+  id: number;
 
   @Column({ length: 100 })
   key: string;
@@ -27,7 +27,7 @@ export class OrgSetting {
   organization: Organization;
 
   @Column({ name: 'organization_id' })
-  organizationId: string;
+  organizationId: number;
 
   @CreateDateColumn()
   createdAt: Date;

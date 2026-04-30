@@ -10,6 +10,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -28,7 +29,7 @@ export class CategoriesController {
   @UseGuards(OrgSlugGuard)
   @Get()
   findAll(
-    @OrgId() orgId: string,
+    @OrgId() orgId: number,
     @Query('type') type?: TransactionType,
   ) {
     return this.svc.findAll(orgId, type);
@@ -36,34 +37,34 @@ export class CategoriesController {
 
   @UseGuards(OrgSlugGuard)
   @Get('income')
-  findIncome(@OrgId() orgId: string) {
+  findIncome(@OrgId() orgId: number) {
     return this.svc.findAll(orgId, TransactionType.INCOME);
   }
 
   @UseGuards(OrgSlugGuard)
   @Get('expense')
-  findExpense(@OrgId() orgId: string) {
+  findExpense(@OrgId() orgId: number) {
     return this.svc.findAll(orgId, TransactionType.EXPENSE);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post('seed')
   @HttpCode(HttpStatus.OK)
-  seed(@OrgId() orgId: string) {
+  seed(@OrgId() orgId: number) {
     return this.svc.seedDefaults(orgId);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post()
-  create(@OrgId() orgId: string, @Body() dto: CreateCategoryDto) {
+  create(@OrgId() orgId: number, @Body() dto: CreateCategoryDto) {
     return this.svc.create(orgId, dto);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Put(':id')
   update(
-    @OrgId() orgId: string,
-    @Param('id') id: string,
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateCategoryDto,
   ) {
     return this.svc.update(orgId, id, dto);
@@ -72,7 +73,7 @@ export class CategoriesController {
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@OrgId() orgId: string, @Param('id') id: string) {
+  remove(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
     return this.svc.remove(orgId, id);
   }
 }
