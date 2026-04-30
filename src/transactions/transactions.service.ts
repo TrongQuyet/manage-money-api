@@ -12,12 +12,33 @@ export class TransactionsService {
     @InjectRepository(Transaction) private txRepo: Repository<Transaction>,
   ) {}
 
-  async findAll(orgId: number): Promise<Transaction[]> {
-    return this.txRepo.find({
-      where: { organizationId: orgId },
-      relations: ['member', 'category'],
-      order: { date: 'DESC', createdAt: 'DESC' },
-    });
+  async findAll(
+    orgId: number,
+    page?: number,
+    limit?: number,
+    search?: string,
+  ): Promise<{ data: Transaction[]; total: number }> {
+    const qb = this.txRepo
+      .createQueryBuilder('tx')
+      .leftJoinAndSelect('tx.member', 'member')
+      .leftJoinAndSelect('tx.category', 'category')
+      .where('tx.organization_id = :orgId', { orgId })
+      .orderBy('tx.date', 'DESC')
+      .addOrderBy('tx.created_at', 'DESC');
+
+    if (search?.trim()) {
+      qb.andWhere(
+        '(tx.description LIKE :s OR member.name LIKE :s OR tx.recipient LIKE :s)',
+        { s: `%${search.trim()}%` },
+      );
+    }
+
+    const total = await qb.getCount();
+    if (limit && limit > 0) {
+      qb.skip(((page ?? 1) - 1) * limit).take(limit);
+    }
+    const data = await qb.getMany();
+    return { data, total };
   }
 
   async findOne(orgId: number, id: number): Promise<Transaction> {

@@ -17,11 +17,30 @@ export class MembersService {
     @InjectRepository(OrganizationUser) private readonly ouRepo: Repository<OrganizationUser>,
   ) {}
 
-  async findAll(orgId: number): Promise<Member[]> {
-    return this.memberRepo.find({
-      where: { organizationId: orgId },
-      order: { joinedAt: 'ASC' },
-    });
+  async findAll(
+    orgId: number,
+    page?: number,
+    limit?: number,
+    search?: string,
+  ): Promise<{ data: Member[]; total: number }> {
+    const qb = this.memberRepo
+      .createQueryBuilder('m')
+      .where('m.organization_id = :orgId', { orgId })
+      .orderBy('m.joined_at', 'ASC');
+
+    if (search?.trim()) {
+      qb.andWhere(
+        '(m.name LIKE :s OR m.email LIKE :s OR m.phone LIKE :s)',
+        { s: `%${search.trim()}%` },
+      );
+    }
+
+    const total = await qb.getCount();
+    if (limit && limit > 0) {
+      qb.skip(((page ?? 1) - 1) * limit).take(limit);
+    }
+    const data = await qb.getMany();
+    return { data, total };
   }
 
   async findOne(orgId: number, id: number): Promise<Member> {

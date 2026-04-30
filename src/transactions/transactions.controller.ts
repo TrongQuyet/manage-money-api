@@ -6,6 +6,7 @@ import {
   Delete,
   Param,
   Body,
+  Query,
   UseGuards,
   HttpCode,
   HttpStatus,
@@ -26,8 +27,18 @@ export class TransactionsController {
 
   @UseGuards(OrgSlugGuard)
   @Get()
-  findAll(@OrgId() orgId: number) {
-    return this.svc.findAll(orgId);
+  findAll(
+    @OrgId() orgId: number,
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+    @Query('search') search?: string,
+  ) {
+    return this.svc.findAll(
+      orgId,
+      page ? Number.parseInt(page) : undefined,
+      limit ? Number.parseInt(limit) : undefined,
+      search,
+    );
   }
 
   @UseGuards(OrgSlugGuard)
