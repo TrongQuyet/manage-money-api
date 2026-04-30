@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 import { Member } from '../entities/member.entity';
+import { User } from '../entities/user.entity';
+import { OrganizationUser, OrgUserRole } from '../entities/organization-user.entity';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
 import { UpdateSelfMemberDto } from './dto/update-self-member.dto';
@@ -9,7 +12,9 @@ import { UpdateSelfMemberDto } from './dto/update-self-member.dto';
 @Injectable()
 export class MembersService {
   constructor(
-    @InjectRepository(Member) private memberRepo: Repository<Member>,
+    @InjectRepository(Member) private readonly memberRepo: Repository<Member>,
+    @InjectRepository(User) private readonly userRepo: Repository<User>,
+    @InjectRepository(OrganizationUser) private readonly ouRepo: Repository<OrganizationUser>,
   ) {}
 
   async findAll(orgId: string): Promise<Member[]> {
@@ -28,7 +33,31 @@ export class MembersService {
   }
 
   async create(orgId: string, dto: CreateMemberDto): Promise<Member> {
-    const member = this.memberRepo.create({ ...dto, organizationId: orgId });
+    let userId: string | null = null;
+
+    if (dto.email) {
+      let user = await this.userRepo.findOne({ where: { user_name: dto.email } });
+
+      if (!user) {
+        const hash = await bcrypt.hash('1', 12);
+        user = await this.userRepo.save(
+          this.userRepo.create({ user_name: dto.email, password: hash, display_name: dto.name }),
+        );
+      }
+
+      const existing = await this.ouRepo.findOne({
+        where: { organizationId: orgId, userId: user.id },
+      });
+      if (!existing) {
+        await this.ouRepo.save(
+          this.ouRepo.create({ organizationId: orgId, userId: user.id, role: OrgUserRole.MEMBER }),
+        );
+      }
+
+      userId = user.id;
+    }
+
+    const member = this.memberRepo.create({ ...dto, organizationId: orgId, userId });
     return this.memberRepo.save(member);
   }
 

@@ -2,6 +2,7 @@ import {
   Controller,
   Post,
   Get,
+  Put,
   Delete,
   Param,
   Body,
@@ -12,6 +13,7 @@ import {
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { InviteUserDto } from './dto/invite-user.dto';
+import { OrgUserRole } from '../entities/organization-user.entity';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { OrgMemberGuard } from '../common/guards/org-member.guard';
 import { OrgAdminGuard } from '../common/guards/org-admin.guard';
@@ -70,6 +72,16 @@ export class OrganizationsController {
     @Body() dto: InviteUserDto,
   ) {
     return this.svc.inviteUser(orgId, dto);
+  }
+
+  @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
+  @Put(':orgId/users/:userId/role')
+  updateUserRole(
+    @Param('orgId') orgId: string,
+    @Param('userId') userId: string,
+    @Body('role') role: OrgUserRole,
+  ) {
+    return this.svc.updateUserRole(orgId, userId, role);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)

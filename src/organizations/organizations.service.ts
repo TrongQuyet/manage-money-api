@@ -2,6 +2,8 @@ import {
   Injectable,
   NotFoundException,
   ConflictException,
+  ForbiddenException,
+  BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -71,6 +73,10 @@ export class OrganizationsService {
   }
 
   async inviteUser(orgId: string, dto: InviteUserDto) {
+    if (dto.role === OrgUserRole.OWNER) {
+      throw new BadRequestException('Không thể gán quyền OWNER');
+    }
+
     const user = await this.userRepo.findOne({ where: { user_name: dto.user_name } });
     if (!user) throw new NotFoundException('User not found');
 
@@ -92,7 +98,25 @@ export class OrganizationsService {
       where: { organizationId: orgId, userId },
     });
     if (!ou) throw new NotFoundException('User not in organization');
+    if (ou.role === OrgUserRole.OWNER) {
+      throw new ForbiddenException('Không thể xóa tài khoản OWNER khỏi tổ chức');
+    }
     await this.ouRepo.remove(ou);
+  }
+
+  async updateUserRole(orgId: string, targetUserId: string, role: OrgUserRole) {
+    if (role === OrgUserRole.OWNER) {
+      throw new BadRequestException('Không thể gán quyền OWNER');
+    }
+    const ou = await this.ouRepo.findOne({
+      where: { organizationId: orgId, userId: targetUserId },
+    });
+    if (!ou) throw new NotFoundException('User not in organization');
+    if (ou.role === OrgUserRole.OWNER) {
+      throw new ForbiddenException('Không thể thay đổi quyền của OWNER');
+    }
+    ou.role = role;
+    return this.ouRepo.save(ou);
   }
 
   async getMyRole(orgSlug: string, userId: string): Promise<{ role: string | null }> {
