@@ -43,7 +43,7 @@ export class Member {
   @Column({ name: 'user_id', nullable: true })
   userId: number | null;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'joined_at' })
   joinedAt: Date;
 
   @ManyToOne(() => Organization, (o) => o.members, { onDelete: 'CASCADE' })

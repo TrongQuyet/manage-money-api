@@ -55,9 +55,9 @@ export class Transaction {
   @Column({ name: 'category_id', nullable: true })
   categoryId: number;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: 'updated_at' })
   updatedAt: Date;
 }

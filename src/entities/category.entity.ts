@@ -24,13 +24,13 @@ export class Category {
   @Column({ type: 'enum', enum: TransactionType })
   type: TransactionType;
 
-  @Column({ default: false })
+  @Column({ name: 'is_default', default: false })
   isDefault: boolean;
 
-  @Column({ default: true })
+  @Column({ name: 'is_active', default: true })
   isActive: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @ManyToOne(() => Organization, (o) => o.categories, { onDelete: 'CASCADE' })

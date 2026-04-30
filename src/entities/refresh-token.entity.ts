@@ -13,19 +13,19 @@ export class RefreshToken {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ name: 'token_hash' })
   tokenHash: string;
 
-  @Column()
+  @Column({ name: 'expires_at' })
   expiresAt: Date;
 
   @Column({ default: false })
   revoked: boolean;
 
-  @Column({ length: 255, nullable: true })
+  @Column({ name: 'user_agent', length: 255, nullable: true })
   userAgent: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @ManyToOne(() => User, (u) => u.refreshTokens, { onDelete: 'CASCADE' })

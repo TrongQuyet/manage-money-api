@@ -22,7 +22,7 @@ export class User {
   @Column({ length: 100, nullable: true })
   display_name: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
 
   @OneToMany(() => OrganizationUser, (ou) => ou.user)

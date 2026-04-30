@@ -107,7 +107,7 @@ async function seedCategories(orgId: number): Promise<Map<string, number>> {
 
   const existing: { id: number; name: string; type: string }[] =
     await dataSource.query(
-      'SELECT id, name, type FROM categories WHERE organization_id = ? AND isDefault = 1',
+      'SELECT id, name, type FROM categories WHERE organization_id = ? AND is_default = 1',
       [orgId],
     );
 
@@ -119,7 +119,7 @@ async function seedCategories(orgId: number): Promise<Map<string, number>> {
 
   for (const cat of DEFAULT_CATEGORIES) {
     const result = await dataSource.query(
-      `INSERT INTO categories (name, type, isDefault, isActive, organization_id, createdAt)
+      `INSERT INTO categories (name, type, is_default, is_active, organization_id, created_at)
        VALUES (?, ?, 1, 1, ?, NOW())`,
       [cat.name, cat.type, orgId],
     );
@@ -162,7 +162,7 @@ async function run() {
   } else {
     const slug = await generateUniqueSlug(data.organization.name, data.organization.slug);
     const result = await dataSource.query(
-      `INSERT INTO organizations (name, slug, description, createdAt, updatedAt)
+      `INSERT INTO organizations (name, slug, description, created_at, updated_at)
        VALUES (?, ?, ?, NOW(), NOW())`,
       [data.organization.name, slug, data.organization.description || null],
     );
@@ -191,7 +191,7 @@ async function run() {
       resolvedUsername = `${data.admin.user_name}-${orgSlug}`;
       const hashedPassword = await bcrypt.hash(data.admin.password, 12);
       const result = await dataSource.query(
-        `INSERT INTO users (user_name, password, createdAt) VALUES (?, ?, NOW())`,
+        `INSERT INTO users (user_name, password, created_at) VALUES (?, ?, NOW())`,
         [resolvedUsername, hashedPassword],
       );
       userId = result.insertId;
@@ -203,7 +203,7 @@ async function run() {
   } else {
     const hashedPassword = await bcrypt.hash(data.admin.password, 12);
     const result = await dataSource.query(
-      `INSERT INTO users (user_name, password, createdAt) VALUES (?, ?, NOW())`,
+      `INSERT INTO users (user_name, password, created_at) VALUES (?, ?, NOW())`,
       [resolvedUsername, hashedPassword],
     );
     userId = result.insertId;
@@ -220,7 +220,7 @@ async function run() {
     console.log(`[org-user] Admin đã được liên kết với tổ chức, bỏ qua.`);
   } else {
     await dataSource.query(
-      `INSERT INTO organization_users (role, user_id, organization_id, joinedAt)
+      `INSERT INTO organization_users (role, user_id, organization_id, joined_at)
        VALUES ('owner', ?, ?, NOW())`,
       [userId, orgId],
     );
@@ -252,7 +252,7 @@ async function run() {
     }
 
     const result = await dataSource.query(
-      `INSERT INTO members (name, email, phone, address, role, note, organization_id, joinedAt)
+      `INSERT INTO members (name, email, phone, address, role, note, organization_id, joined_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         member.name,
@@ -299,7 +299,7 @@ async function run() {
     }
 
     await dataSource.query(
-      `INSERT INTO transactions (type, amount, description, recipient, date, organization_id, member_id, category_id, createdAt, updatedAt)
+      `INSERT INTO transactions (type, amount, description, recipient, date, organization_id, member_id, category_id, created_at, updated_at)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())`,
       [
         tx.type,

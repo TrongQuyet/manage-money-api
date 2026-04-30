@@ -23,7 +23,7 @@ export class OrganizationUser {
   @Column({ type: 'enum', enum: OrgUserRole, default: OrgUserRole.MEMBER })
   role: OrgUserRole;
 
-  @CreateDateColumn()
+  @CreateDateColumn({ name: 'joined_at' })
   joinedAt: Date;
 
   @ManyToOne(() => Organization, (o) => o.organizationUsers, { onDelete: 'CASCADE' })
