@@ -8,12 +8,14 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtRefreshStrategy } from './strategies/jwt-refresh.strategy';
 import { User } from '../entities/user.entity';
 import { RefreshToken } from '../entities/refresh-token.entity';
+import { LogsModule } from '../logs/logs.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, RefreshToken]),
     PassportModule,
     JwtModule.register({}),
+    LogsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, JwtRefreshStrategy],

@@ -15,6 +15,7 @@ import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { LogsService } from '../logs/logs.service';
 
 const COOKIE_OPTS = {
   httpOnly: true,
@@ -25,7 +26,10 @@ const COOKIE_OPTS = {
 
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly logsService: LogsService,
+  ) {}
 
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
@@ -48,6 +52,12 @@ export class AuthController {
     res.cookie('refresh_token', refreshToken, {
       ...COOKIE_OPTS,
       maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    this.logsService.logActivity({
+      userId: user.id,
+      userName: user.user_name,
+      action: 'LOGIN',
     });
 
     return { message: 'Login successful', user };
@@ -78,13 +88,19 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(
-    @CurrentUser() user: { userId: number },
+    @CurrentUser() user: { userId: number; username: string },
     @Res({ passthrough: true }) res: Response,
   ) {
     await this.authService.logout(user.userId);
 
     res.clearCookie('access_token', COOKIE_OPTS);
     res.clearCookie('refresh_token', COOKIE_OPTS);
+
+    this.logsService.logActivity({
+      userId: user.userId,
+      userName: user.username,
+      action: 'LOGOUT',
+    });
 
     return { message: 'Logged out' };
   }

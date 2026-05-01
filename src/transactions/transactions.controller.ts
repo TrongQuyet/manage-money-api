@@ -20,6 +20,7 @@ import { OrgMemberGuard } from '../common/guards/org-member.guard';
 import { OrgAdminGuard } from '../common/guards/org-admin.guard';
 import { OrgSlugGuard } from '../common/guards/org-slug.guard';
 import { OrgId } from '../common/decorators/org-id.decorator';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
 
 @Controller(':orgSlug/transactions')
 export class TransactionsController {
@@ -55,8 +56,12 @@ export class TransactionsController {
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post()
-  create(@OrgId() orgId: number, @Body() dto: CreateTransactionDto) {
-    return this.svc.create(orgId, dto);
+  create(
+    @OrgId() orgId: number,
+    @Body() dto: CreateTransactionDto,
+    @CurrentUser() user: { userId: number; username: string },
+  ) {
+    return this.svc.create(orgId, dto, user);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
@@ -65,14 +70,19 @@ export class TransactionsController {
     @OrgId() orgId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateTransactionDto,
+    @CurrentUser() user: { userId: number; username: string },
   ) {
-    return this.svc.update(orgId, id, dto);
+    return this.svc.update(orgId, id, dto, user);
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
-    return this.svc.remove(orgId, id);
+  remove(
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: { userId: number; username: string },
+  ) {
+    return this.svc.remove(orgId, id, user);
   }
 }

@@ -22,10 +22,14 @@ import { OrgAdminGuard } from '../common/guards/org-admin.guard';
 import { OrgSlugGuard } from '../common/guards/org-slug.guard';
 import { OrgId } from '../common/decorators/org-id.decorator';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { LogsService } from '../logs/logs.service';
 
 @Controller(':orgSlug/members')
 export class MembersController {
-  constructor(private readonly svc: MembersService) {}
+  constructor(
+    private readonly svc: MembersService,
+    private readonly logsService: LogsService,
+  ) {}
 
   @UseGuards(OrgSlugGuard)
   @Get()
@@ -70,24 +74,61 @@ export class MembersController {
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Post()
-  create(@OrgId() orgId: number, @Body() dto: CreateMemberDto) {
-    return this.svc.create(orgId, dto);
+  async create(
+    @OrgId() orgId: number,
+    @Body() dto: CreateMemberDto,
+    @CurrentUser() user: { userId: number; username: string },
+  ) {
+    const member = await this.svc.create(orgId, dto);
+    this.logsService.logActivity({
+      userId: user.userId,
+      userName: user.username,
+      action: 'CREATE_MEMBER',
+      entityType: 'member',
+      entityId: member.id,
+      orgId,
+      metadata: { name: (member as any).name },
+    });
+    return member;
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Put(':id')
-  update(
+  async update(
     @OrgId() orgId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateMemberDto,
+    @CurrentUser() user: { userId: number; username: string },
   ) {
-    return this.svc.update(orgId, id, dto);
+    const member = await this.svc.update(orgId, id, dto);
+    this.logsService.logActivity({
+      userId: user.userId,
+      userName: user.username,
+      action: 'UPDATE_MEMBER',
+      entityType: 'member',
+      entityId: id,
+      orgId,
+      metadata: { changes: Object.keys(dto) },
+    });
+    return member;
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@OrgId() orgId: number, @Param('id', ParseIntPipe) id: number) {
-    return this.svc.remove(orgId, id);
+  async remove(
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser() user: { userId: number; username: string },
+  ) {
+    await this.svc.remove(orgId, id);
+    this.logsService.logActivity({
+      userId: user.userId,
+      userName: user.username,
+      action: 'DELETE_MEMBER',
+      entityType: 'member',
+      entityId: id,
+      orgId,
+    });
   }
 }

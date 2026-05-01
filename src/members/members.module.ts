@@ -6,9 +6,10 @@ import { Member } from '../entities/member.entity';
 import { User } from '../entities/user.entity';
 import { OrganizationUser } from '../entities/organization-user.entity';
 import { CommonModule } from '../common/common.module';
+import { LogsModule } from '../logs/logs.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Member, User, OrganizationUser]), CommonModule],
+  imports: [TypeOrmModule.forFeature([Member, User, OrganizationUser]), CommonModule, LogsModule],
   controllers: [MembersController],
   providers: [MembersService],
 })
