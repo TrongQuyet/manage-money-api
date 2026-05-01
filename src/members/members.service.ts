@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Member } from '../entities/member.entity';
+import { Member, MemberRole } from '../entities/member.entity';
 import { User } from '../entities/user.entity';
 import { OrganizationUser, OrgUserRole } from '../entities/organization-user.entity';
 import { CreateMemberDto } from './dto/create-member.dto';
@@ -83,7 +83,19 @@ export class MembersService {
   async update(orgId: number, id: number, dto: UpdateMemberDto): Promise<Member> {
     const member = await this.findOne(orgId, id);
     Object.assign(member, dto);
-    return this.memberRepo.save(member);
+    const saved = await this.memberRepo.save(member);
+
+    if (dto.role !== undefined && member.userId) {
+      const orgUser = await this.ouRepo.findOne({
+        where: { organizationId: orgId, userId: member.userId },
+      });
+      if (orgUser && orgUser.role !== OrgUserRole.OWNER) {
+        orgUser.role = dto.role === MemberRole.ADMIN ? OrgUserRole.ADMIN : OrgUserRole.MEMBER;
+        await this.ouRepo.save(orgUser);
+      }
+    }
+
+    return saved;
   }
 
   async remove(orgId: number, id: number): Promise<void> {
