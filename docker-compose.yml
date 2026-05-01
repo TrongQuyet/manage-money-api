@@ -20,7 +20,10 @@ services:
       DB_PORT: 3308
     networks:
       - noithatmylannew_app_network
+      - manage_money_net
 
 networks:
   noithatmylannew_app_network:
+    external: true
+  manage_money_net:
     external: true
