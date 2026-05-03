@@ -90,6 +90,17 @@ export class AuthService {
     return safe;
   }
 
+  async changePassword(userId: number, currentPassword: string, newPassword: string) {
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException();
+
+    const valid = await bcrypt.compare(currentPassword, user.password);
+    if (!valid) throw new UnauthorizedException('Mật khẩu hiện tại không đúng');
+
+    user.password = await bcrypt.hash(newPassword, 12);
+    await this.userRepo.save(user);
+  }
+
   private async generateTokens(user: User) {
     const payload = { sub: user.id, username: user.user_name };
 

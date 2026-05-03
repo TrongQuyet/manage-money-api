@@ -11,6 +11,7 @@ import {
   HttpCode,
   HttpStatus,
   ParseIntPipe,
+  NotFoundException,
 } from '@nestjs/common';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
@@ -49,11 +50,13 @@ export class MembersController {
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard)
   @Get('self')
-  getSelf(
+  async getSelf(
     @OrgId() orgId: number,
     @CurrentUser() user: { userId: number },
   ) {
-    return this.svc.findByUserId(orgId, user.userId);
+    const member = await this.svc.findByUserId(orgId, user.userId);
+    if (!member) throw new NotFoundException('Không tìm thấy hồ sơ thành viên');
+    return member;
   }
 
   @UseGuards(JwtAuthGuard, OrgMemberGuard)

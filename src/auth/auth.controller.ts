@@ -1,6 +1,7 @@
 import {
   Controller,
   Post,
+  Put,
   Get,
   Body,
   Res,
@@ -12,6 +13,7 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { CurrentUser } from '../common/decorators/current-user.decorator';
@@ -109,5 +111,16 @@ export class AuthController {
   @Get('me')
   getMe(@CurrentUser() user: { userId: number }) {
     return this.authService.getMe(user.userId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('change-password')
+  @HttpCode(HttpStatus.OK)
+  async changePassword(
+    @CurrentUser() user: { userId: number },
+    @Body() dto: ChangePasswordDto,
+  ) {
+    await this.authService.changePassword(user.userId, dto.current_password, dto.new_password);
+    return { message: 'Đổi mật khẩu thành công' };
   }
 }
