@@ -4,11 +4,12 @@ import { EventsController } from './events.controller';
 import { EventsService } from './events.service';
 import { Event } from '../entities/event.entity';
 import { EventVote } from '../entities/event-vote.entity';
+import { Member } from '../entities/member.entity';
 import { CommonModule } from '../common/common.module';
 import { LogsModule } from '../logs/logs.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, EventVote]), CommonModule, LogsModule],
+  imports: [TypeOrmModule.forFeature([Event, EventVote, Member]), CommonModule, LogsModule],
   controllers: [EventsController],
   providers: [EventsService],
 })

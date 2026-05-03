@@ -5,9 +5,10 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { Event, EventStatus } from '../entities/event.entity';
 import { EventVote } from '../entities/event-vote.entity';
+import { Member } from '../entities/member.entity';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { LogsService } from '../logs/logs.service';
@@ -17,6 +18,7 @@ export class EventsService {
   constructor(
     @InjectRepository(Event) private readonly eventRepo: Repository<Event>,
     @InjectRepository(EventVote) private readonly voteRepo: Repository<EventVote>,
+    @InjectRepository(Member) private readonly memberRepo: Repository<Member>,
     private readonly logsService: LogsService,
   ) {}
 
@@ -56,14 +58,17 @@ export class EventsService {
       votesByEvent.get(vote.eventId)!.push(vote);
     }
 
-    const data = events.map((event) => this.buildEventResponse(event, votesByEvent.get(event.id) ?? [], userId));
+    const allVotes = [...votesByEvent.values()].flat();
+    const voterNames = await this.resolveVoterNames(orgId, allVotes);
+    const data = events.map((event) => this.buildEventResponse(event, votesByEvent.get(event.id) ?? [], userId, voterNames));
     return { data, total };
   }
 
   async findOne(orgId: number, id: number, userId: number) {
     const event = await this.findEventOrFail(orgId, id);
     const votes = await this.voteRepo.find({ where: { eventId: id } });
-    return this.buildEventResponse(event, votes, userId);
+    const voterNames = await this.resolveVoterNames(orgId, votes);
+    return this.buildEventResponse(event, votes, userId, voterNames);
   }
 
   async create(
@@ -112,7 +117,8 @@ export class EventsService {
     });
 
     const votes = await this.voteRepo.find({ where: { eventId: id } });
-    return this.buildEventResponse(saved, votes, actor.userId);
+    const voterNames = await this.resolveVoterNames(orgId, votes);
+    return this.buildEventResponse(saved, votes, actor.userId, voterNames);
   }
 
   async remove(
@@ -157,7 +163,8 @@ export class EventsService {
     await this.voteRepo.save(voteRecord);
 
     const votes = await this.voteRepo.find({ where: { eventId } });
-    return this.buildEventResponse(event, votes, userId);
+    const voterNames = await this.resolveVoterNames(orgId, votes);
+    return this.buildEventResponse(event, votes, userId, voterNames);
   }
 
   async cancelVote(orgId: number, eventId: number, userId: number) {
@@ -170,7 +177,8 @@ export class EventsService {
     await this.voteRepo.delete({ eventId, userId });
 
     const votes = await this.voteRepo.find({ where: { eventId } });
-    return this.buildEventResponse(event, votes, userId);
+    const voterNames = await this.resolveVoterNames(orgId, votes);
+    return this.buildEventResponse(event, votes, userId, voterNames);
   }
 
   private async findEventOrFail(orgId: number, id: number): Promise<Event> {
@@ -179,13 +187,33 @@ export class EventsService {
     return event;
   }
 
-  private buildEventResponse(event: Event, votes: EventVote[], userId: number) {
+  private async resolveVoterNames(orgId: number, votes: EventVote[]): Promise<Map<number, string>> {
+    const userIds = [...new Set(votes.map((v) => v.userId))];
+    if (userIds.length === 0) return new Map();
+    const members = await this.memberRepo.find({
+      where: { organizationId: orgId, userId: In(userIds) },
+      select: { userId: true, name: true },
+    });
+    return new Map(members.filter((m) => m.userId !== null).map((m) => [m.userId, m.name]));
+  }
+
+  private buildEventResponse(
+    event: Event,
+    votes: EventVote[],
+    userId: number,
+    voterNames: Map<number, string> = new Map(),
+  ) {
     const voteCount: Record<string, number> = {};
     for (const opt of event.options) voteCount[opt] = 0;
     for (const vote of votes) {
       voteCount[vote.option] = (voteCount[vote.option] ?? 0) + 1;
     }
     const myVote = votes.find((v) => v.userId === userId)?.option;
-    return { ...event, voteCount, myVote };
+    const voters = votes.map((v) => ({
+      userId: v.userId,
+      name: voterNames.get(v.userId) ?? `Thành viên #${v.userId}`,
+      option: v.option,
+    }));
+    return { ...event, voteCount, myVote, voters };
   }
 }
