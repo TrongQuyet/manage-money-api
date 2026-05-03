@@ -34,5 +34,9 @@ export class CreateEventDto {
 
   @IsDateString()
   @IsOptional()
+  eventDate?: string;
+
+  @IsDateString()
+  @IsOptional()
   endDate?: string;
 }

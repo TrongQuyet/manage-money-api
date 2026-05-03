@@ -37,6 +37,9 @@ export class Event {
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.ACTIVE })
   status: EventStatus;
 
+  @Column({ type: 'date', nullable: true, name: 'event_date' })
+  eventDate: string;
+
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: string;
 
