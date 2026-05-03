@@ -40,6 +40,9 @@ export class Event {
   @Column({ type: 'date', nullable: true, name: 'event_date' })
   eventDate: string;
 
+  @Column({ length: 5, nullable: true, name: 'event_time' })
+  eventTime: string;
+
   @Column({ type: 'date', nullable: true, name: 'end_date' })
   endDate: string;
 
