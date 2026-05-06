@@ -18,4 +18,12 @@ export class UpdateSelfMemberDto {
   @IsString()
   @IsOptional()
   address?: string;
+
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  bankQrUrl?: string;
 }

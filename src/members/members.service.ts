@@ -113,4 +113,37 @@ export class MembersService {
     Object.assign(member, dto);
     return this.memberRepo.save(member);
   }
+
+  async updateMemberAccount(orgId: number, memberId: number, data: { user_name?: string; new_password?: string }): Promise<void> {
+    const member = await this.findOne(orgId, memberId);
+    if (!member.userId) throw new NotFoundException('Thành viên này chưa có tài khoản');
+
+    const user = await this.userRepo.findOne({ where: { id: member.userId } });
+    if (!user) throw new NotFoundException('Tài khoản không tồn tại');
+
+    if (data.user_name && data.user_name !== user.user_name) {
+      const conflict = await this.userRepo.findOne({ where: { user_name: data.user_name } });
+      if (conflict) throw new Error('Username đã tồn tại');
+      user.user_name = data.user_name;
+    }
+
+    if (data.new_password) {
+      user.password = await bcrypt.hash(data.new_password, 12);
+    }
+
+    await this.userRepo.save(user);
+  }
+
+  async updateImageField(orgId: number, id: number, field: 'avatarUrl' | 'bankQrUrl', url: string): Promise<Member> {
+    const member = await this.findOne(orgId, id);
+    member[field] = url;
+    return this.memberRepo.save(member);
+  }
+
+  async updateSelfImageField(orgId: number, userId: number, field: 'avatarUrl' | 'bankQrUrl', url: string): Promise<Member> {
+    const member = await this.findByUserId(orgId, userId);
+    if (!member) throw new NotFoundException('Không tìm thấy thông tin thành viên của bạn');
+    member[field] = url;
+    return this.memberRepo.save(member);
+  }
 }

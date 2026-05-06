@@ -12,7 +12,14 @@ import {
   HttpStatus,
   ParseIntPipe,
   NotFoundException,
+  UseInterceptors,
+  UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname, join } from 'node:path';
+import { existsSync, mkdirSync } from 'node:fs';
 import { MembersService } from './members.service';
 import { CreateMemberDto } from './dto/create-member.dto';
 import { UpdateMemberDto } from './dto/update-member.dto';
@@ -134,4 +141,103 @@ export class MembersController {
       orgId,
     });
   }
+
+  // ─── Upload avatar (self) — phải đứng TRƯỚC :id routes ─────────────────────
+  @UseGuards(JwtAuthGuard, OrgMemberGuard)
+  @Post('self/avatar')
+  @UseInterceptors(FileInterceptor('file', makeStorage('avatars')))
+  async uploadSelfAvatar(
+    @OrgId() orgId: number,
+    @CurrentUser() user: { userId: number },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('Không có file được tải lên');
+    const url = `/uploads/avatars/${file.filename}`;
+    return this.svc.updateSelfImageField(orgId, user.userId, 'avatarUrl', url);
+  }
+
+  // ─── Upload bank QR (self) — phải đứng TRƯỚC :id routes ─────────────────────
+  @UseGuards(JwtAuthGuard, OrgMemberGuard)
+  @Post('self/bank-qr')
+  @UseInterceptors(FileInterceptor('file', makeStorage('bank-qr')))
+  async uploadSelfBankQr(
+    @OrgId() orgId: number,
+    @CurrentUser() user: { userId: number },
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('Không có file được tải lên');
+    const url = `/uploads/bank-qr/${file.filename}`;
+    return this.svc.updateSelfImageField(orgId, user.userId, 'bankQrUrl', url);
+  }
+
+  // ─── Admin đổi username / password của member ───────────────────────────────
+  @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
+  @Put(':id/account')
+  async updateMemberAccount(
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: { user_name?: string; new_password?: string },
+    @CurrentUser() user: { userId: number; username: string },
+  ) {
+    await this.svc.updateMemberAccount(orgId, id, body);
+    this.logsService.logActivity({
+      userId: user.userId,
+      userName: user.username,
+      action: 'UPDATE_MEMBER_ACCOUNT',
+      entityType: 'member',
+      entityId: id,
+      orgId,
+      metadata: { changed: Object.keys(body) },
+    });
+    return { message: 'Cập nhật tài khoản thành công' };
+  }
+
+  // ─── Upload avatar (admin cho bất kỳ member) ────────────────────────────────
+  @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
+  @Post(':id/avatar')
+  @UseInterceptors(FileInterceptor('file', makeStorage('avatars')))
+  async uploadAvatar(
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('Không có file được tải lên');
+    const url = `/uploads/avatars/${file.filename}`;
+    return this.svc.updateImageField(orgId, id, 'avatarUrl', url);
+  }
+
+  // ─── Upload bank QR (admin cho bất kỳ member) ───────────────────────────────
+  @UseGuards(JwtAuthGuard, OrgMemberGuard, OrgAdminGuard)
+  @Post(':id/bank-qr')
+  @UseInterceptors(FileInterceptor('file', makeStorage('bank-qr')))
+  async uploadBankQr(
+    @OrgId() orgId: number,
+    @Param('id', ParseIntPipe) id: number,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    if (!file) throw new BadRequestException('Không có file được tải lên');
+    const url = `/uploads/bank-qr/${file.filename}`;
+    return this.svc.updateImageField(orgId, id, 'bankQrUrl', url);
+  }
+}
+
+function makeStorage(folder: string) {
+  const dest = join(process.cwd(), 'uploads', folder);
+  if (!existsSync(dest)) mkdirSync(dest, { recursive: true });
+  return {
+    storage: diskStorage({
+      destination: dest,
+      filename: (_req, file, cb) => {
+        const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+        cb(null, `${unique}${extname(file.originalname)}`);
+      },
+    }),
+    fileFilter: (_req: any, file: Express.Multer.File, cb: any) => {
+      if (!/^image\//.exec(file.mimetype)) {
+        return cb(new BadRequestException('Chỉ chấp nhận file ảnh'), false);
+      }
+      cb(null, true);
+    },
+    limits: { fileSize: 5 * 1024 * 1024 },
+  };
 }

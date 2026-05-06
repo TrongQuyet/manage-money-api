@@ -40,6 +40,12 @@ export class Member {
   @Column({ type: 'text', nullable: true })
   note: string;
 
+  @Column({ name: 'avatar_url', type: 'text', nullable: true })
+  avatarUrl: string | null;
+
+  @Column({ name: 'bank_qr_url', type: 'text', nullable: true })
+  bankQrUrl: string | null;
+
   @Column({ name: 'user_id', nullable: true })
   userId: number | null;
 

@@ -34,4 +34,12 @@ export class CreateMemberDto {
   @IsString()
   @IsOptional()
   note?: string;
+
+  @IsString()
+  @IsOptional()
+  avatarUrl?: string;
+
+  @IsString()
+  @IsOptional()
+  bankQrUrl?: string;
 }
