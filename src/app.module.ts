@@ -9,6 +9,10 @@ import { CategoriesModule } from './categories/categories.module';
 import { OrgSettingsModule } from './org-settings/org-settings.module';
 import { LogsModule } from './logs/logs.module';
 import { EventsModule } from './events/events.module';
+import { LoanRequestsModule } from './loan-requests/loan-requests.module';
+import { LoanRequest } from './entities/loan-request.entity';
+import { LoanVote } from './entities/loan-vote.entity';
+import { TransferRequest } from './entities/transfer-request.entity';
 import { Organization } from './entities/organization.entity';
 import { User } from './entities/user.entity';
 import { OrganizationUser } from './entities/organization-user.entity';
@@ -48,6 +52,9 @@ import { EventVote } from './entities/event-vote.entity';
           AuditLog,
           Event,
           EventVote,
+          LoanRequest,
+          LoanVote,
+          TransferRequest,
         ],
         synchronize: config.get<string>('NODE_ENV') !== 'production',
         charset: 'utf8mb4',
@@ -62,6 +69,7 @@ import { EventVote } from './entities/event-vote.entity';
     OrgSettingsModule,
     LogsModule,
     EventsModule,
+    LoanRequestsModule,
   ],
 })
 export class AppModule {}
