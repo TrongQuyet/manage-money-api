@@ -7,11 +7,12 @@ import { LoanVote } from '../entities/loan-vote.entity';
 import { TransferRequest } from '../entities/transfer-request.entity';
 import { Member } from '../entities/member.entity';
 import { ActivityLog } from '../entities/activity-log.entity';
+import { OrgSetting } from '../entities/org-setting.entity';
 import { CommonModule } from '../common/common.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([LoanRequest, LoanVote, TransferRequest, Member, ActivityLog]),
+    TypeOrmModule.forFeature([LoanRequest, LoanVote, TransferRequest, Member, ActivityLog, OrgSetting]),
     CommonModule,
   ],
   controllers: [LoanRequestsController],

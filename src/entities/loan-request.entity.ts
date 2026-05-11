@@ -44,6 +44,9 @@ export class LoanRequest {
   @Column({ type: 'text' })
   reason: string;
 
+  @Column({ name: 'repayment_date', type: 'date', nullable: true })
+  repaymentDate: string | null;
+
   @Column({
     type: 'enum',
     enum: LoanRequestStatus,

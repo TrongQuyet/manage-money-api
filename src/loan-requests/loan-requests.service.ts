@@ -11,9 +11,13 @@ import { LoanVote } from '../entities/loan-vote.entity';
 import { TransferRequest } from '../entities/transfer-request.entity';
 import { Member } from '../entities/member.entity';
 import { ActivityLog } from '../entities/activity-log.entity';
+import { OrgSetting } from '../entities/org-setting.entity';
 import { CreateLoanRequestDto } from './dto/create-loan-request.dto';
 import { AdminReviewDto } from './dto/admin-review.dto';
 import { VoteLoanRequestDto } from './dto/vote-loan-request.dto';
+
+const DEFAULT_MAX_AMOUNT = 3_000_000;
+const DEFAULT_MAX_DAYS = 90;
 
 @Injectable()
 export class LoanRequestsService {
@@ -23,6 +27,7 @@ export class LoanRequestsService {
     @InjectRepository(TransferRequest) private transferRepo: Repository<TransferRequest>,
     @InjectRepository(Member) private memberRepo: Repository<Member>,
     @InjectRepository(ActivityLog) private activityRepo: Repository<ActivityLog>,
+    @InjectRepository(OrgSetting) private readonly settingRepo: Repository<OrgSetting>,
   ) {}
 
   async create(
@@ -33,6 +38,25 @@ export class LoanRequestsService {
   ): Promise<LoanRequest> {
     const member = await this.memberRepo.findOne({ where: { organizationId: orgId, userId } });
     if (!member) throw new ForbiddenException('Bạn chưa có hồ sơ thành viên trong tổ chức này');
+
+    const settings = await this.settingRepo.find({ where: { organizationId: orgId } });
+    const getSetting = (key: string) => settings.find((s) => s.key === key)?.value;
+
+    const maxAmount = Number(getSetting('loan_max_amount') ?? DEFAULT_MAX_AMOUNT);
+    if (dto.amount > maxAmount) {
+      throw new BadRequestException(`Số tiền vay tối đa là ${maxAmount.toLocaleString('vi-VN')} ₫`);
+    }
+
+    const maxDays = Number(getSetting('loan_max_days') ?? DEFAULT_MAX_DAYS);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const repayDate = new Date(dto.repaymentDate);
+    repayDate.setHours(0, 0, 0, 0);
+    const diffDays = Math.round((repayDate.getTime() - today.getTime()) / 86_400_000);
+    if (diffDays <= 0) throw new BadRequestException('Ngày hẹn trả phải sau ngày hôm nay');
+    if (diffDays > maxDays) {
+      throw new BadRequestException(`Ngày hẹn trả không quá ${maxDays} ngày kể từ hôm nay`);
+    }
 
     const existing = await this.loanRepo.findOne({
       where: {
@@ -57,6 +81,7 @@ export class LoanRequestsService {
       organizationId: orgId,
       amount: dto.amount,
       reason: dto.reason,
+      repaymentDate: dto.repaymentDate,
     });
     const saved = await this.loanRepo.save(request);
     this.logActivity({ userId, userName, action: 'CREATE_LOAN_REQUEST', entityId: saved.id, orgId, metadata: { amount: dto.amount } });

@@ -1,4 +1,4 @@
-import { IsInt, IsPositive, IsString, MinLength } from 'class-validator';
+import { IsDateString, IsInt, IsPositive, IsString, MinLength } from 'class-validator';
 
 export class CreateLoanRequestDto {
   @IsInt()
@@ -8,4 +8,7 @@ export class CreateLoanRequestDto {
   @IsString()
   @MinLength(10)
   reason: string;
+
+  @IsDateString()
+  repaymentDate: string;
 }
